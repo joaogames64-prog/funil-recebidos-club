@@ -148,17 +148,15 @@ app.post('/api/checkout', async (req, res) => {
           }
         };
 
-        axios.post('https://lowtrack.com.br/api/webhook', lowtrackPayload, {
+        await axios.post('https://lowtrack.com.br/api/webhook', lowtrackPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${LOWTRACK_TOKEN}`
           }
-        }).catch(err => {
-          console.error("Erro ao enviar para LowTrack:", err.response?.data || err.message);
         });
 
       } catch (ltErr) {
-        console.error("LowTrack Logic Error:", ltErr.message);
+        console.error("LowTrack Logic Error:", ltErr.response?.data || ltErr.message);
       }
     }
 
