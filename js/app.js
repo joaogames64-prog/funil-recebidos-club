@@ -175,50 +175,94 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Testimonials Animator (Step 4 - rc-testi)
-  const testiSlides = document.querySelectorAll('.rc-testi-slide');
-  const testiDots = document.querySelectorAll('.rc-testi-dots i');
-  if (testiSlides.length > 0) {
-    let currentTesti = 0;
-    function showTesti() {
-      testiSlides.forEach((s, i) => {
-        if (i === currentTesti) s.classList.add('is-active');
-        else s.classList.remove('is-active');
-      });
-      if (testiDots.length > 0) {
-         testiDots.forEach((d, i) => {
-            if (i === currentTesti) d.classList.add('is-active');
+  // Scoped Testimonials Animator
+  const testiContainers = document.querySelectorAll('.rc-testi');
+  testiContainers.forEach(container => {
+    const slides = container.querySelectorAll('.rc-testi-slide');
+    const dots = container.querySelectorAll('.rc-testi-dots i');
+    if (slides.length > 0) {
+      let current = 0;
+      function show() {
+        slides.forEach((s, i) => {
+          if (i === current) s.classList.add('is-active');
+          else s.classList.remove('is-active');
+        });
+        if (dots.length > 0) {
+          dots.forEach((d, i) => {
+            if (i === current) d.classList.add('is-active');
             else d.classList.remove('is-active');
-         });
+          });
+        }
+        current = (current + 1) % slides.length;
       }
-      currentTesti = (currentTesti + 1) % testiSlides.length;
+      show();
+      setInterval(show, 4000);
     }
-    showTesti(); // Run immediately
-    setInterval(showTesti, 4000);
-  }
+  });
 
   // --- Step 5: Profile Check ---
   function simulateProfileCheck() {
     const fill = document.querySelector('.profile-check-progress-fill');
+    const desc = document.querySelector('.profile-check-progress-desc');
+    const texts = ["Verificando dados pessoais...", "Analisando perfil...", "Verificando Instagram...", "Calculando limites de comissão..."];
+    
+    // Video injection
+    const video = document.querySelector('.profile-check-video');
+    if (video) {
+      const source = video.querySelector('source');
+      if (source && source.dataset.src) {
+        source.src = source.dataset.src;
+        video.load();
+        video.play().catch(e => console.log('Video autoplay blocked:', e));
+      }
+    }
+
+    // Show horizontal testimonials if hidden
+    const horizontalTestis = document.querySelector('.profile-check-testimonials');
+    if (horizontalTestis) {
+        horizontalTestis.removeAttribute('hidden');
+    }
+
     if (fill) {
       setTimeout(() => {
-         fill.style.transition = 'width 3s linear';
+         fill.style.transition = 'width 3.5s linear';
          fill.style.width = '100%';
       }, 100);
+    }
+
+    if (desc) {
+      let textIdx = 0;
+      const textInterval = setInterval(() => {
+        textIdx++;
+        if (textIdx < texts.length) {
+          desc.textContent = texts[textIdx];
+        } else {
+          clearInterval(textInterval);
+          desc.textContent = "Perfil Aprovado!";
+        }
+      }, 800);
     }
 
     setTimeout(() => {
       const btnVerify = document.querySelector('.profile-check-cta');
       if (btnVerify) {
-        btnVerify.hidden = false; // Show the button!
+        btnVerify.hidden = false;
         btnVerify.addEventListener('click', () => {
           goToSection('approval');
+          
+          // Animate approval step Name
+          const profileName = document.querySelector('#profileName');
+          const approvalName = document.querySelector('[data-step-panel="approval-chat-name-full"]');
+          if(profileName && profileName.value && approvalName) {
+              approvalName.textContent = profileName.value;
+          }
+
           setTimeout(() => {
             goToSection('address');
           }, 3000);
         });
       }
-    }, 3100);
+    }, 3600);
   }
 
   // Testimonials Marquee (Step 5 - profile-check)
