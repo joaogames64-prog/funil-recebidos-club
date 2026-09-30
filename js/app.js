@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Step 6: Approval Chat ---
-  function startApprovalChat() {
+    function startApprovalChat() {
      const messagesContainer = document.querySelector('.approval-chat-messages');
      if(!messagesContainer) return;
 
@@ -31,13 +31,38 @@ document.addEventListener('DOMContentLoaded', () => {
      existingMsgs.forEach(m => m.remove());
      const existingCta = messagesContainer.querySelector('.approval-chat-cta');
      if(existingCta) existingCta.remove();
+     
+     // Remove old interaction buttons if any
+     const existingActions = messagesContainer.querySelectorAll('.approval-chat-bubble--action');
+     existingActions.forEach(a => a.remove());
+
+     function getCurrentTime() {
+         const now = new Date();
+         const h = String(now.getHours()).padStart(2, '0');
+         const m = String(now.getMinutes()).padStart(2, '0');
+         return `${h}:${m}`;
+     }
 
      function createMsg(htmlContent, extraClasses='') {
          const msg = document.createElement('div');
          msg.className = 'approval-chat-msg ' + extraClasses;
          msg.innerHTML = `
-           <img class="approval-chat-avatar" src="img/hero.webp" alt="">
+           <img class="approval-chat-avatar" src="img/profile.webp" alt="">
            ${htmlContent}
+         `;
+         messagesContainer.appendChild(msg);
+         msg.scrollIntoView({ behavior: 'smooth' });
+         return msg;
+     }
+
+     function createUserMsg(text) {
+         const msg = document.createElement('div');
+         msg.className = 'approval-chat-msg approval-chat-msg--user';
+         msg.innerHTML = `
+           <div class="approval-chat-bubble has-time">
+              ${text}
+              <span class="approval-chat-time">${getCurrentTime()}</span>
+           </div>
          `;
          messagesContainer.appendChild(msg);
          msg.scrollIntoView({ behavior: 'smooth' });
@@ -46,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
      function createTypingMsg() {
          return createMsg(`
-           <div class="approval-chat-bubble">
+           <div class="approval-chat-bubble has-time">
               <div class="approval-chat-typing">
                  <div class="approval-chat-typing-dot"></div>
                  <div class="approval-chat-typing-dot"></div>
@@ -58,8 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
      function createTextMsg(text) {
          return createMsg(`
-           <div class="approval-chat-bubble">
+           <div class="approval-chat-bubble has-time">
               ${text}
+              <span class="approval-chat-time">${getCurrentTime()}</span>
            </div>
          `);
      }
@@ -69,10 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
          if (typeof selectedKits !== 'undefined' && selectedKits.size > 0) {
              const kitsArray = Array.from(selectedKits);
              kitsArray.slice(0, 3).forEach(idx => {
-                imgTags += `<img src="img/kits/somentekits/${idx+1}.webp" alt="Kit">`;
+                imgTags += `<img src="img/kits/kit_dl_${idx+1}.webp" alt="Kit">`;
              });
          } else {
-             imgTags = `<img src="img/kits/somentekits/1.webp" alt="Kit"><img src="img/kits/somentekits/2.webp" alt="Kit">`;
+             imgTags = `<img src="img/kits/kit_dl_1.webp" alt="Kit"><img src="img/kits/kit_dl_2.webp" alt="Kit">`;
          }
          return createMsg(`
            <div class="approval-chat-bubble approval-chat-media">
@@ -81,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       ${imgTags}
                   </div>
               </div>
+              <span class="approval-chat-time">${getCurrentTime()}</span>
            </div>
          `);
      }
@@ -88,13 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
      function createTotalMsg() {
          let totalValue = 0;
          if (typeof selectedKits !== 'undefined' && selectedKits.size > 0) {
-             const values = {
-               1: 229.9, 2: 329.9, 3: 189.9, 4: 259.9, 5: 149.9, 6: 199.9,
-               7: 289.9, 8: 179.9, 9: 269.9, 10: 219.9, 11: 169.9, 12: 279.9
-             };
-             selectedKits.forEach(idx => {
-                totalValue += values[idx + 1] || 200;
-             });
+             selectedKits.forEach(idx => { totalValue += 235.90; });
          } else {
              totalValue = 1179.50; // fallback if no kits selected
          }
@@ -110,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  <p class="approval-chat-total-title">Valor Total dos Produtos Escolhidos: <span class="approval-chat-total-value">${formattedValue}</span></p>
                  <p class="approval-chat-total-text">São mais de ${formattedValue} em produtos, totalmente de GRAÇA em parceria, incrível né? 🤩💜</p>
               </div>
+              <span class="approval-chat-time">${getCurrentTime()}</span>
            </div>
          `);
      }
@@ -125,23 +147,24 @@ document.addEventListener('DOMContentLoaded', () => {
                  <p class="approval-chat-gift-title"><strong>Um Brinde Grátis <span class="approval-chat-gift-accent">EXCLUSIVO</span></strong> em parceria com a Pandora: Esse bracelete é maravilhoso, né? 💜✨</p>
                  <p class="approval-chat-gift-text">Tudo isso no seu Primeiro Envio! Parabéns, viu? Você garantiu uma das últimas vagas disponíveis!</p>
               </div>
+              <span class="approval-chat-time">${getCurrentTime()}</span>
            </div>
          `);
      }
 
      function createAudioMsg() {
-         const durationSec = 19; // from RC_CONFIG.approvalChat.audioDurationSeconds
          const audioSrc = 'img/audio/act.mp3';
          
          const msg = createMsg(`
            <div class="approval-chat-bubble approval-chat-audio" id="rcAudioPlayer">
                <span class="approval-chat-audio-ic approval-chat-audio-ic--play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
-               <span class="approval-chat-audio-ic approval-chat-audio-ic--pause"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></span>
+               <span class="approval-chat-audio-ic approval-chat-audio-ic--pause" style="display:none;"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></span>
                <div class="approval-chat-audio-bar">
                   <div class="approval-chat-audio-fill" id="rcAudioFill" style="width: 0%;"></div>
                </div>
                <span class="approval-chat-audio-time" id="rcAudioCurrent">0:00</span>
-               <span class="approval-chat-audio-time" style="left: auto; right: 40px;" id="rcAudioTotal">0:${String(durationSec).padStart(2,'0')}</span>
+               <span class="approval-chat-audio-time" style="left: auto; right: 40px;" id="rcAudioTotal">...</span>
+               <span class="approval-chat-time">${getCurrentTime()}</span>
            </div>
          `);
          
@@ -149,6 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
              const player = document.getElementById('rcAudioPlayer');
              const fill = document.getElementById('rcAudioFill');
              const currentLabel = document.getElementById('rcAudioCurrent');
+             const playIcon = player.querySelector('.approval-chat-audio-ic--play');
+             const pauseIcon = player.querySelector('.approval-chat-audio-ic--pause');
              if (!player) return;
              
              const audio = new Audio(audioSrc);
@@ -159,26 +184,37 @@ document.addEventListener('DOMContentLoaded', () => {
                  return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
              }
              
+             audio.addEventListener('loadedmetadata', () => {
+                 const totalEl = document.getElementById('rcAudioTotal');
+                 if (totalEl && audio.duration) totalEl.textContent = fmtTime(audio.duration);
+             });
+             
              function updateBar() {
                  const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
                  fill.style.width = pct + '%';
                  currentLabel.textContent = fmtTime(audio.currentTime);
-                 const totalEl = document.getElementById('rcAudioTotal');
-                 if (totalEl && audio.duration) totalEl.textContent = fmtTime(audio.duration);
              }
              
              audio.addEventListener('timeupdate', updateBar);
              audio.addEventListener('ended', () => {
                  player.classList.remove('is-playing');
+                 playIcon.style.display = 'block';
+                 pauseIcon.style.display = 'none';
                  fill.style.width = '100%';
              });
              
              player.addEventListener('click', () => {
                  if (audio.paused) {
-                     audio.play().then(() => player.classList.add('is-playing')).catch(() => {});
+                     audio.play().then(() => {
+                         player.classList.add('is-playing');
+                         playIcon.style.display = 'none';
+                         pauseIcon.style.display = 'block';
+                     }).catch(() => {});
                  } else {
                      audio.pause();
                      player.classList.remove('is-playing');
+                     playIcon.style.display = 'block';
+                     pauseIcon.style.display = 'none';
                  }
              });
          }, 100);
@@ -186,21 +222,41 @@ document.addEventListener('DOMContentLoaded', () => {
          return msg;
      }
 
-     function createCta() {
-         const btn = document.createElement('button');
-         btn.type = 'button';
-         btn.className = 'cta-button approval-chat-cta';
-         btn.textContent = 'PREENCHER MEU ENDEREÇO →';
-         btn.addEventListener('click', () => {
-             goToSection('address');
+     function createInteractionButton() {
+         const wrap = document.createElement('div');
+         wrap.className = 'approval-chat-bubble--action';
+         wrap.innerHTML = `<button class="approval-chat-cta">EU QUERO MEUS KITS!</button>`;
+         
+         wrap.querySelector('button').addEventListener('click', async () => {
+             wrap.remove();
+             createUserMsg("Eu quero meus kits!");
+             
+             await delay(1000);
+             const typing = createTypingMsg();
+             await delay(2000);
+             typing.remove();
+             
+             createTextMsg("Perfeito! O seu perfil foi aprovado e agora você só precisa preencher o seu endereço de entrega e pagar a pequena taxa de frete para enviarmos. 💕");
+             
+             await delay(1000);
+             const btn = document.createElement('button');
+             btn.type = 'button';
+             btn.className = 'cta-button approval-chat-cta';
+             btn.textContent = 'PREENCHER MEU ENDEREÇO →';
+             btn.addEventListener('click', () => {
+                 goToSection('address');
+             });
+             messagesContainer.appendChild(btn);
+             btn.scrollIntoView({ behavior: 'smooth' });
          });
-         messagesContainer.appendChild(btn);
-         btn.scrollIntoView({ behavior: 'smooth' });
+         
+         messagesContainer.appendChild(wrap);
+         wrap.scrollIntoView({ behavior: 'smooth' });
      }
 
      const nameInput = document.querySelector('#profileName');
      const userName = nameInput && nameInput.value.trim() !== '' ? nameInput.value : 'Avaliadora';
-     const firstName = userName.split(' ')[0];
+     const firstName = userName.split(' ')[0].toUpperCase();
 
      const delay = (ms) => new Promise(r => setTimeout(r, ms));
      
@@ -244,8 +300,8 @@ document.addEventListener('DOMContentLoaded', () => {
          createTextMsg(`🎙️ Antes da gente finalizar seu Perfil, vou te mandar um áudio explicando como funciona nosso clube:`);
          createAudioMsg();
          
-         await delay(1000);
-         createCta();
+         await delay(1500);
+         createInteractionButton();
      })();
   }
 
@@ -264,11 +320,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const kitCounter = document.querySelector('[data-step-panel="kit-selection-counter"]');
   const btnKitsConfirm = document.querySelector('.kit-selection-confirm');
 
-  kitCards.forEach((card, idx) => {
-    if (card.classList.contains('selected')) {
-      selectedKits.add(idx);
-    }
+  // Ensure no kits start pre-selected
+  kitCards.forEach((card) => {
+    card.classList.remove('selected');
   });
+  selectedKits.clear();
+
 
   function updateKits() {
     kitCards.forEach((card, idx) => {
@@ -279,8 +336,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     if (kitCounter) kitCounter.textContent = `${selectedKits.size}/${maxKits}`;
-    if (btnKitsConfirm) btnKitsConfirm.disabled = selectedKits.size < 2;
+    if (btnKitsConfirm) {
+      btnKitsConfirm.disabled = selectedKits.size < 2;
+      btnKitsConfirm.classList.toggle('btn-disabled', selectedKits.size < 2);
+    }
   }
+
+  // Initialize: start with nothing selected
+  updateKits();
+
 
   kitCards.forEach((card, idx) => {
     card.addEventListener('click', () => {
@@ -344,66 +408,111 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Step 4: Profile ---
   const profileSteps = Array.from(document.querySelectorAll('[data-step-panel="profile-step"]'));
   let currentProfileStep = 0;
-  
-  function updateProfileStep() {
-    profileSteps.forEach((step, idx) => {
-      step.style.display = idx === currentProfileStep ? 'block' : 'none';
-      step.setAttribute('data-step-hidden', idx === currentProfileStep ? 'false' : 'true');
+
+  function showProfileStep(idx) {
+    profileSteps.forEach((step, i) => {
+      if (i === idx) {
+        step.removeAttribute('data-step-hidden');
+        step.style.display = '';
+      } else {
+        step.setAttribute('data-step-hidden', 'true');
+        step.style.display = 'none';
+      }
     });
     const stepLabel = document.querySelector('[data-step-panel="profile-nav-step"]');
-    if (stepLabel) stepLabel.textContent = `Passo ${currentProfileStep + 1} de 4`;
+    if (stepLabel) stepLabel.textContent = `Passo ${idx + 1} de 4`;
+    // Update dots
+    const dots = document.querySelectorAll('[data-step-panel="profile-step-dot"]');
+    dots.forEach((dot, i) => {
+      dot.className = i <= idx ? 'is-active' : '';
+    });
+    // Back button visibility
+    const backBtn = document.querySelector('[data-step-action="profile-step-back"]');
+    if (backBtn) backBtn.style.visibility = idx > 0 ? 'visible' : 'hidden';
   }
-  
+
   if (profileSteps.length > 0) {
-    updateProfileStep();
-    
-    // Add click event to all buttons inside profile steps
+    // Make sure all steps initially set
+    profileSteps.forEach((step, i) => {
+      if (i > 0) {
+        step.setAttribute('data-step-hidden', 'true');
+        step.style.display = 'none';
+      } else {
+        step.removeAttribute('data-step-hidden');
+        step.style.display = '';
+      }
+    });
+    showProfileStep(0);
+
+    // Back button
+    const profileBackBtn = document.querySelector('[data-step-action="profile-step-back"]');
+    if (profileBackBtn) {
+      profileBackBtn.addEventListener('click', () => {
+        if (currentProfileStep > 0) {
+          currentProfileStep--;
+          showProfileStep(currentProfileStep);
+        }
+      });
+    }
+
     profileSteps.forEach((step, idx) => {
-      // Inputs event listener for enabling next button
       const inputs = step.querySelectorAll('input');
       const btnNext = step.querySelector('.cta-button');
-      
+
+      // Input-driven enable
       if (inputs.length > 0 && btnNext) {
-        inputs.forEach(inp => inp.addEventListener('input', () => {
+        const checkInputs = () => {
           const allFilled = Array.from(inputs).every(i => i.value.trim() !== '');
-          if (allFilled) {
-            btnNext.classList.remove('btn-disabled');
-            btnNext.disabled = false;
-          } else {
-            btnNext.classList.add('btn-disabled');
-            btnNext.disabled = true;
+          btnNext.classList.toggle('btn-disabled', !allFilled);
+          btnNext.disabled = !allFilled;
+        };
+        inputs.forEach(inp => inp.addEventListener('input', checkInputs));
+        // Also support enter key
+        inputs.forEach(inp => inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !btnNext.disabled) {
+            e.preventDefault();
+            btnNext.click();
           }
         }));
       }
 
-      // Options click selection
-      const options = step.querySelectorAll('.profile-option-card, .profile-grid-item, .profile-category-card, button[data-choice], button[data-step-panel="profile-product-card"], .profile-option');
-      options.forEach(opt => {
-        opt.addEventListener('click', (e) => {
-          e.preventDefault();
-          opt.classList.toggle('selected');
-          
-          if (btnNext) {
-            const hasSelected = step.querySelectorAll('.selected').length > 0;
-            if (hasSelected) {
-              btnNext.classList.remove('btn-disabled');
-              btnNext.disabled = false;
+      // Choice buttons (single-select per group)
+      const choiceGroups = step.querySelectorAll('[data-step-panel="profile-choice"], [data-step-panel="profile-product-grid"]');
+      choiceGroups.forEach(group => {
+        const choiceButtons = group.querySelectorAll('button');
+        const isSingleSelect = group.dataset.choiceLayout === 'cards' ? false : true;
+
+        choiceButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (isSingleSelect) {
+              // Single-select: deselect siblings first
+              choiceButtons.forEach(b => b.classList.remove('selected', 'is-selected'));
+              btn.classList.add('selected', 'is-selected');
             } else {
-              btnNext.classList.add('btn-disabled');
-              btnNext.disabled = true;
+              // Multi-select
+              btn.classList.toggle('selected');
+              btn.classList.toggle('is-selected');
             }
-          }
+            // Enable next button
+            if (btnNext) {
+              const anySelected = step.querySelectorAll('.selected, .is-selected').length > 0;
+              btnNext.classList.toggle('btn-disabled', !anySelected);
+              btnNext.disabled = !anySelected;
+            }
+          });
         });
       });
 
+      // Next button
       if (btnNext) {
         btnNext.addEventListener('click', (e) => {
           e.preventDefault();
+          if (btnNext.disabled) return;
           if (idx < profileSteps.length - 1) {
-            currentProfileStep++;
-            updateProfileStep();
+            currentProfileStep = idx + 1;
+            showProfileStep(currentProfileStep);
+            window.scrollTo(0, 0);
           } else {
-            // Last step -> profile-check
             goToSection('profile-check');
             simulateProfileCheck();
           }
@@ -519,10 +628,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
+        video.muted = false;
+        video.volume = 1.0;
         video.play().then(() => {
             video.addEventListener('ended', finishCheck);
             // Backup fallback just in case video hangs
-            setTimeout(finishCheck, 12000); 
+            setTimeout(finishCheck, 60000); 
         }).catch(e => {
             console.log('Video autoplay blocked:', e);
             if (fill) {
@@ -532,10 +643,10 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(finishCheck, 5000);
         });
       } else {
-        setTimeout(finishCheck, 3500);
+        setTimeout(finishCheck, 5000);
       }
     } else {
-        setTimeout(finishCheck, 3500);
+        setTimeout(finishCheck, 5000);
     }
   }
 
@@ -573,26 +684,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Step 8: Shipping ---
   const btnShippingConf = document.querySelector('.rc-ms-cta');
-  if (btnShippingConf) {
+  const msBody = document.querySelector('[data-step-panel="shipping-multistep-body"]');
+  const msStep2 = document.querySelector('[data-step-panel="shipping-ms-step2"]');
+  const msStep3 = document.querySelector('[data-step-panel="shipping-ms-step3"]');
+
+  if (btnShippingConf && msBody) {
     btnShippingConf.addEventListener('click', () => {
-      goToSection('checkout');
+      // Oculta os itens do topo (Kits e o botão de Confirmar Vaga)
+      btnShippingConf.style.display = 'none';
+      const card = document.querySelector('.rc-ms-card');
+      if (card) card.style.display = 'none';
+      
+      // Mostra o body multi-step
+      msBody.removeAttribute('aria-hidden');
     });
   }
-  
-  // Also handle shipping options
+
+  // Handle plan options (Step 1 -> Step 2)
+  const planOptions = document.querySelectorAll('.rc-plan-option');
+  planOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+      planOptions.forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      if (msStep2) {
+         msStep2.removeAttribute('aria-hidden');
+         msStep2.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    });
+  });
+
+  // Handle shipping options (Step 2 -> Step 3)
   const shipOptions = document.querySelectorAll('.rc-ship-option');
   shipOptions.forEach(opt => {
       opt.addEventListener('click', () => {
           shipOptions.forEach(o => o.classList.remove('selected'));
           opt.classList.add('selected');
+          if (msStep3) {
+             msStep3.removeAttribute('aria-hidden');
+             msStep3.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }
       });
   });
+
+  // Handle bump (extra surpresa)
+  const bumpCard = document.querySelector('.rc-bump-card');
+  if (bumpCard) {
+    bumpCard.addEventListener('click', () => {
+       const isPressed = bumpCard.getAttribute('aria-pressed') === 'true';
+       bumpCard.setAttribute('aria-pressed', !isPressed);
+    });
+  }
 
   // --- Step 9: Checkout ---
   const btnCheckout = document.querySelector('.rc-finalize-cta');
   if (btnCheckout) {
     btnCheckout.addEventListener('click', () => {
-       alert("Gateway de pagamento será integrado em breve.");
+       goToSection('checkout');
     });
   }
 });
