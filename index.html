@@ -48,26 +48,107 @@
     @keyframes shimmer{0%{background-position:-200%}100%{background-position:200%}}
     .cta-button:active{transform:scale(.97);box-shadow:0 4px 12px rgba(136,42,255,.25)}
 
-    /* Seleção de kits */
-    .step-kits{background:var(--co-lilac-100)!important;overflow-y:auto!important;padding:20px 18px 100px!important}
-    .kits-header{text-align:center;margin-bottom:16px}
-    .kits-title{font-size:1.25rem;font-weight:800;color:var(--co-deep-900);line-height:1.2}
-    .kits-title span{color:var(--co-accent)}
-    .kits-subtitle{font-size:.75rem;color:var(--co-ink-500);margin-top:4px;line-height:1.4}
-    .kits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
-    .kit-card{background:#fff;border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;border:2.5px solid transparent;transition:border-color .2s,transform .15s,box-shadow .2s;box-shadow:0 2px 8px rgba(0,0,0,.07);position:relative;user-select:none}
-    .kit-card.selected{border-color:var(--co-accent);box-shadow:0 4px 16px rgba(136,42,255,.22)}
-    .kit-card.selected::after{content:'✓';position:absolute;top:8px;right:8px;width:20px;height:20px;background:var(--co-accent);border-radius:50%;color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:20px;text-align:center}
-    .kit-card:active{transform:scale(.97)}
-    .kit-card img{width:100%;height:80px;object-fit:contain}
-    .kit-card-name{font-size:.72rem;font-weight:700;color:var(--co-deep-900);text-align:center;line-height:1.2}
-    .kit-card-tag{font-size:.6rem;font-weight:600;background:var(--co-accent-bg);color:var(--co-accent);padding:2px 8px;border-radius:99px}
-    .kits-footer{position:fixed;bottom:0;left:0;right:0;background:rgba(244,239,250,.95);backdrop-filter:blur(10px);padding:14px 20px 20px;border-top:1px solid #e0d4f5;z-index:100;max-width:500px;margin:0 auto;left:50%;transform:translateX(-50%)}
-    .kits-count-text{font-size:.72rem;color:var(--co-ink-500);text-align:center;margin-bottom:8px}
-    .kits-count-text strong{color:var(--co-accent)}
-    .kits-cta{width:100%;padding:15px 20px;background:linear-gradient(90deg,#882aff,#a54bff);border:none;border-radius:12px;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;font-family:Poppins,sans-serif;box-shadow:0 6px 18px rgba(136,42,255,.3);transition:transform .15s,opacity .15s}
-    .kits-cta:disabled{opacity:.5;cursor:not-allowed}
-    .kits-cta:not(:disabled):active{transform:scale(.98)}
+    /* Seleção de kits — fiel ao original */
+    [data-step-id=kit-selection]{
+      background:#fff!important;
+      padding:0!important;
+      overflow:hidden!important;
+      display:flex!important;
+      flex-direction:column!important;
+    }
+    .kits-top-header{
+      padding:14px 16px 10px;
+      background:#fff;
+      border-bottom:1px solid #f0eaf8;
+      flex-shrink:0;
+    }
+    .kits-page-title{font-size:1.5rem;font-weight:800;color:var(--co-deep-900);line-height:1.2;margin-bottom:4px}
+    .kits-page-title span{color:var(--co-accent)}
+    .kits-page-sub{font-size:.78rem;color:var(--co-ink-500);line-height:1.4;margin-bottom:4px}
+    .kits-page-sub strong{color:var(--co-accent)}
+    .kits-available-bar{
+      display:flex;align-items:center;justify-content:space-between;
+      background:var(--co-accent-bg);border-radius:10px;padding:8px 12px;
+      margin-top:8px;
+    }
+    .kits-available-label{font-size:.8rem;font-weight:700;color:var(--co-deep-900);display:flex;align-items:center;gap:5px}
+    .kits-available-count{background:var(--co-accent);color:#fff;font-size:.78rem;font-weight:800;border-radius:99px;padding:3px 12px}
+    /* Scroll area */
+    .kits-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 10px 0}
+    .kits-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      width:100%;
+    }
+    /* Card */
+    .kit-card{
+      background:#fff;
+      border-radius:12px;
+      border:2px solid #ede8f5;
+      overflow:hidden;
+      cursor:pointer;
+      position:relative;
+      transition:border-color .18s,box-shadow .18s;
+      box-shadow:0 1px 4px rgba(0,0,0,.06);
+      display:flex;flex-direction:column;
+    }
+    .kit-card.selected{border-color:var(--co-accent);box-shadow:0 3px 12px rgba(136,42,255,.2)}
+    .kit-card.sold-out{opacity:.55;cursor:default}
+    .kit-card-img-wrap{width:100%;aspect-ratio:1/1;overflow:hidden;background:#f7f3fc}
+    .kit-card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+    .kit-card-body{padding:5px 6px 7px;flex:1;display:flex;flex-direction:column;gap:1px}
+    .kit-card-brand{font-size:.68rem;font-weight:800;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .kit-card-desc{font-size:.58rem;color:var(--co-ink-500);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .kit-card-meta{font-size:.55rem;color:var(--co-ink-400);line-height:1.1;margin-top:2px}
+    .kit-card-stock{font-size:.55rem;font-weight:600;color:#16a34a;line-height:1}
+    .kit-card-stock.few{color:#d97706}
+    .kit-card-stock.out{color:#9ca3af}
+    /* Checkmark */
+    .kit-check{
+      position:absolute;top:5px;right:5px;
+      width:20px;height:20px;
+      background:#e5e0f0;
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .15s;
+    }
+    .kit-card.selected .kit-check{background:var(--co-accent)}
+    .kit-check svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:.4;transition:opacity .15s}
+    .kit-card.selected .kit-check svg{opacity:1}
+    /* Badge mais escolhido */
+    .kit-badge{
+      position:absolute;top:5px;left:5px;
+      background:#ffd700;color:#1f1235;
+      font-size:.45rem;font-weight:800;
+      padding:2px 5px;border-radius:4px;
+      text-transform:uppercase;letter-spacing:.3px;
+    }
+    /* Footer */
+    .kits-footer{
+      flex-shrink:0;
+      background:#fff;
+      border-top:1px solid #ede8f5;
+      padding:10px 14px 14px;
+    }
+    .kits-reserve-btn{
+      width:100%;padding:16px;
+      background:var(--co-accent);
+      border:none;border-radius:50px;
+      color:#fff;font-size:1rem;font-weight:900;
+      letter-spacing:.5px;text-transform:uppercase;
+      cursor:pointer;font-family:Poppins,sans-serif;
+      box-shadow:0 6px 18px rgba(136,42,255,.35);
+      transition:transform .15s,opacity .15s;
+    }
+    .kits-reserve-btn:disabled{opacity:.45;cursor:not-allowed}
+    .kits-reserve-btn:not(:disabled):active{transform:scale(.98)}
+    .kits-footer-note{
+      display:flex;align-items:flex-start;gap:7px;
+      margin-top:8px;
+      font-size:.65rem;color:var(--co-ink-500);line-height:1.4;
+    }
+    .kits-footer-note strong{color:var(--co-deep-900)}
 
     /* Formulário / Dados pessoais */
     .step-form{background:#fff!important;overflow-y:auto!important;padding:28px 20px 100px!important}
@@ -203,19 +284,30 @@
   </section>
 
   <!-- ===== STEP 2: SELEÇÃO DE KITS ===== -->
-  <section class="page step-kits" id="stepKits">
-    <div class="kits-header">
-      <h2 class="kits-title">Escolha seus <span>kits</span> favoritos</h2>
-      <p class="kits-subtitle">Selecione pelo menos 2 kits para continuar</p>
+  <section class="page step-kits" id="stepKits" data-step-id="kit-selection">
+    <!-- Header fixo -->
+    <div class="kits-top-header">
+      <h2 class="kits-page-title">Escolha até <span>5 Kits para<br>Receber</span></h2>
+      <p class="kits-page-sub">Selecione as marcas que mais combinam com você.<br><strong>Você pode escolher até 5 kits!</strong></p>
+      <div class="kits-available-bar">
+        <span class="kits-available-label">🔥 Kits Disponíveis Hoje</span>
+        <span class="kits-available-count" id="kitsAvailCount">5/5</span>
+      </div>
     </div>
-    <div class="kits-grid" id="kitsGrid">
-      <!-- Gerado pelo JS abaixo -->
+    <!-- Grid rolável -->
+    <div class="kits-scroll">
+      <div class="kits-grid" id="kitsGrid"><!-- JS --></div>
     </div>
+    <!-- Footer fixo -->
     <div class="kits-footer">
-      <p class="kits-count-text" id="kitsCountText">Selecione pelo menos <strong>2 kits</strong></p>
-      <button type="button" class="kits-cta" id="btnKitsContinue" disabled>Continuar &rarr;</button>
+      <button type="button" class="kits-reserve-btn" id="btnKitsContinue" disabled>RESERVAR MEUS KITS</button>
+      <div class="kits-footer-note">
+        <span>🎁</span>
+        <span>Todos os Produtos são <strong>Gratuitos</strong>, enviados em Parceria com as Marcas. Termine seu Cadastro para Garantir sua Vaga!</span>
+      </div>
     </div>
   </section>
+
 
   <!-- ===== STEP 3: DADOS PESSOAIS ===== -->
   <section class="page step-form" id="stepForm">
@@ -332,19 +424,20 @@
 
   /* ===== CONFIGURAÇÃO DOS KITS ===== */
   const KITS = [
-    { id: 1,  name: 'Kit Pele Perfeita',    tag: 'Cuidados com a pele',   img: 'img/kits/1.webp',  price: 49.90 },
-    { id: 2,  name: 'Kit Maquiagem Glow',   tag: 'Maquiagem',             img: 'img/kits/2.webp',  price: 49.90 },
-    { id: 3,  name: 'Kit Cabelos Sedosos',  tag: 'Cabelos',               img: 'img/kits/3.webp',  price: 49.90 },
-    { id: 4,  name: 'Kit Corpo em Forma',   tag: 'Corpo',                 img: 'img/kits/4.webp',  price: 49.90 },
-    { id: 5,  name: 'Kit Sobrancelha',      tag: 'Make',                  img: 'img/kits/5.webp',  price: 49.90 },
-    { id: 6,  name: 'Kit Skincare Noturno', tag: 'Skincare',              img: 'img/kits/6.webp',  price: 49.90 },
-    { id: 7,  name: 'Kit Olhos Marcantes',  tag: 'Maquiagem',             img: 'img/kits/7.webp',  price: 49.90 },
-    { id: 8,  name: 'Kit Hidratação Total', tag: 'Hidratação',            img: 'img/kits/8.webp',  price: 49.90 },
-    { id: 9,  name: 'Kit Lábios Perfeitos', tag: 'Labial',                img: 'img/kits/9.webp',  price: 49.90 },
-    { id: 10, name: 'Kit Proteção Solar',   tag: 'Skincare',              img: 'img/kits/10.webp', price: 49.90 },
-    { id: 11, name: 'Kit Perfumaria',       tag: 'Fragrâncias',           img: 'img/kits/11.webp', price: 49.90 },
-    { id: 12, name: 'Kit Nail Art',         tag: 'Unhas',                 img: 'img/kits/12.webp', price: 49.90 },
+    { id:1,  brand:'creamy',    color:'#e91e8c', desc:'Skincare Dia-a-Dia',    count:'5 Produtos no Kit',  stock:'em',  stockLabel:'Em Estoque',       img:'img/kits/1.webp',  best:true  },
+    { id:2,  brand:'SHEGLAM',   color:'#ff1493', desc:'Maquiagens Sheglam',    count:'12 Produtos no Kit', stock:'em',  stockLabel:'Em Estoque',       img:'img/kits/2.webp',  best:false },
+    { id:3,  brand:'wepink',    color:'#e91e8c', desc:'Bodysplashes Wepink',   count:'6 Produtos no Kit',  stock:'few', stockLabel:'9 Restantes',      img:'img/kits/3.webp',  best:false },
+    { id:4,  brand:'SHEIN',     color:'#111111', desc:'Shein - Acessórios',    count:'+15 Produtos no Kit', stock:'em', stockLabel:'Em Estoque',       img:'img/kits/4.webp',  best:false },
+    { id:5,  brand:'PANDORA',   color:'#9e9e9e', desc:'Bracelete Lovegood',    count:'1 Produto no Kit',   stock:'out', stockLabel:'Esgotado',         img:'img/kits/5.webp',  best:false },
+    { id:6,  brand:'natura',    color:'#388e3c', desc:'Natura Todo-dia Maçã',  count:'7 Produtos no Kit',  stock:'em',  stockLabel:'Em Estoque',       img:'img/kits/6.webp',  best:false },
+    { id:7,  brand:'KÉRASTASE', color:'#b8860b', desc:'Kérastase Genesis',     count:'4 Produtos no Kit',  stock:'few', stockLabel:'7 Restantes',      img:'img/kits/7.webp',  best:false },
+    { id:8,  brand:'EUDORA',    color:'#9c27b0', desc:'Eudora Slage Crono',    count:'6 Produtos no Kit',  stock:'em',  stockLabel:'Em Estoque',       img:'img/kits/8.webp',  best:false },
+    { id:9,  brand:'SEPHORA',   color:'#555555', desc:'Misto Maquiagens',      count:'11 Produtos no Kit', stock:'out', stockLabel:'Esgotado',         img:'img/kits/9.webp',  best:false },
+    { id:10, brand:'WELLA',     color:'#222222', desc:'Wella Invigo Nutri-Ench',count:'4 Produtos no Kit',  stock:'em',  stockLabel:'Em Estoque',       img:'img/kits/10.webp', best:false },
+    { id:11, brand:'melissa',   color:'#e91e8c', desc:'Cheirinho de Melissa',  count:'9 Produtos no Kit',  stock:'em',  stockLabel:'Em Estoque',       img:'img/kits/11.webp', best:false },
+    { id:12, brand:"L'ORÉAL",   color:'#c8a850', desc:"l'oreal Absolut Repair",count:'4 Produtos no Kit',  stock:'few', stockLabel:'11 Restantes',    img:'img/kits/12.webp', best:false },
   ];
+  const MAX_KITS = 5;
 
   /* ===== CHAVE PIX (substitua pela sua) ===== */
   const PIX_KEY = 'SEU_CPF_OU_EMAIL_PIX_AQUI';
@@ -402,15 +495,28 @@
   function buildKitsGrid() {
     const grid = $('kitsGrid');
     KITS.forEach(kit => {
+      const isSoldOut = kit.stock === 'out';
       const card = document.createElement('div');
-      card.className = 'kit-card';
+      card.className = 'kit-card' + (isSoldOut ? ' sold-out' : '');
       card.dataset.kitId = kit.id;
       card.innerHTML = `
-        <img src="${kit.img}" alt="${kit.name}" loading="lazy">
-        <span class="kit-card-name">${kit.name}</span>
-        <span class="kit-card-tag">${kit.tag}</span>
+        <div class="kit-card-img-wrap">
+          <img src="${kit.img}" alt="${kit.brand}" loading="lazy">
+        </div>
+        <div class="kit-card-body">
+          <span class="kit-card-brand" style="color:${kit.color}">${kit.brand}</span>
+          <span class="kit-card-desc">${kit.desc}</span>
+          <span class="kit-card-meta">${kit.count}</span>
+          <span class="kit-card-stock ${kit.stock}">${kit.stockLabel}</span>
+        </div>
+        <div class="kit-check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        ${kit.best ? '<span class="kit-badge">&#x2605; Mais Escolhido</span>' : ''}
       `;
-      card.addEventListener('click', () => toggleKit(kit.id, card));
+      if (!isSoldOut) {
+        card.addEventListener('click', () => toggleKit(kit.id, card));
+      }
       grid.appendChild(card);
     });
   }
@@ -420,6 +526,10 @@
       selectedKits.delete(id);
       card.classList.remove('selected');
     } else {
+      if (selectedKits.size >= MAX_KITS) {
+        showPopup('Limite atingido', `Você pode selecionar no máximo ${MAX_KITS} kits.`);
+        return;
+      }
       selectedKits.add(id);
       card.classList.add('selected');
     }
@@ -428,15 +538,9 @@
 
   function updateKitsFooter() {
     const count = selectedKits.size;
-    const countText = $('kitsCountText');
-    const btn = $('btnKitsContinue');
-    if (count === 0) {
-      countText.innerHTML = 'Selecione pelo menos <strong>2 kits</strong>';
-    } else if (count === 1) {
-      countText.innerHTML = '<strong>1 kit</strong> selecionado — selecione mais 1';
-    } else {
-      countText.innerHTML = `<strong>${count} kits</strong> selecionados`;
-    }
+    const avail = $('kitsAvailCount');
+    const btn   = $('btnKitsContinue');
+    if (avail) avail.textContent = (MAX_KITS - count) + '/' + MAX_KITS;
     btn.disabled = count < 2;
   }
 
