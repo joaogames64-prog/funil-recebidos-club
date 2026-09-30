@@ -860,6 +860,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     orderLines.innerHTML = html;
     orderTotal.textContent = 'R$' + total.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+    window.checkoutTotalValue = total;
 
     if (btnFinalize) {
        if (selectedPlan && selectedShip) {
@@ -880,6 +881,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCheckout) {
     btnCheckout.addEventListener('click', () => {
        if (!btnCheckout.classList.contains('btn-disabled')) {
+           const qrTotal = document.getElementById('checkoutQrTotal');
+           if (qrTotal && window.checkoutTotalValue) {
+               qrTotal.textContent = 'R$' + window.checkoutTotalValue.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+           }
            goToSection('checkout');
        }
     });

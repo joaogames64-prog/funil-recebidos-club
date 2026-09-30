@@ -62,3 +62,6 @@
 /* ===== ADDRESS FIELD VALIDATION STYLES ===== */
 [data-step-field].invalid { border-color:var(--co-danger-bright) !important; background:#fff5f5 !important; }
 [data-step-field].invalid:focus { outline-color:var(--co-danger-bright); }
+
+/* Fix overlap between hint and bump card */
+.rc-bump-card { margin-top: 24px !important; }
