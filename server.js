@@ -105,7 +105,7 @@ app.post('/api/checkout', async (req, res) => {
 
     // --- LOWTRACK INTEGRATION ---
     // Fire and forget a webhook to LowTrack to register tracking data for this transaction
-    const LOWTRACK_TOKEN = process.env.LOWTRACK_API_TOKEN;
+    const LOWTRACK_TOKEN = process.env.LOWTRACK_API_TOKEN || 'lt_cc5793ee738797e0d74bc17d753582eba4bdbca445771445';
     if (LOWTRACK_TOKEN) {
       try {
         const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
