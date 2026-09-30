@@ -19,6 +19,37 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (id === 'approval') {
         startApprovalChat();
+    } else if (id === 'shipping') {
+        const orderKits = document.querySelector('[data-step-panel="shipping-order-kits"]');
+        if (orderKits && typeof selectedKits !== 'undefined') {
+            const kitBrands = {
+                1: { name: 'Wepink', color: '#e91e63' },
+                2: { name: 'SHEGLAM', color: '#c2185b' },
+                3: { name: 'SHEIN', color: '#111111' },
+                4: { name: 'EUDORA', color: '#a1887f' },
+                5: { name: 'WELLA', color: '#d32f2f' },
+                6: { name: 'Natura', color: '#f57c00' },
+                7: { name: 'Kérastase', color: '#1976d2' },
+                8: { name: 'Eudora', color: '#a1887f' },
+                9: { name: 'M.A.C', color: '#111111' },
+                10: { name: 'Wella', color: '#d32f2f' },
+                11: { name: 'Melissa', color: '#e91e63' },
+                12: { name: "L'Oreal", color: '#111111' }
+            };
+            
+            let html = '<div class="rc-order-kits-rail">';
+            Array.from(selectedKits).forEach(idx => {
+                const brand = kitBrands[idx] || { name: 'Marca', color: '#111' };
+                html += `
+                  <div class="rc-order-kit-item">
+                    <span class="rc-order-kit-brand" style="color: ${brand.color};">${brand.name}</span>
+                    <img src="img/kits/kit_dl_${idx}.webp" alt="${brand.name}">
+                  </div>
+                `;
+            });
+            html += '</div>';
+            orderKits.innerHTML = html;
+        }
     }
   }
 
