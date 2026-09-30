@@ -6,139 +6,584 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#E2D1FD">
   <title>Recebidos Club</title>
-
-  <!-- Preconnect -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-
-  <!-- Fonts (local) -->
   <link rel="preload" href="shared/fonts/poppins-v24-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="shared/fonts/poppins-v24-latin-700.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="shared/fonts/poppins-v24-latin-800.woff2" as="font" type="font/woff2" crossorigin>
-
-  <!-- Hero image preload -->
   <link rel="preload" href="img/hero.webp" as="image">
-
-  <!-- CSS (local) -->
   <link rel="stylesheet" href="css/landing.css">
-  <link rel="preload" href="css/support-chat.css" as="style" onload='this.onload=null,this.rel="stylesheet"'>
+  <style>
+    /* Overrides para fontes locais */
+    @font-face{font-family:Poppins;font-weight:400;font-display:swap;src:url('shared/fonts/poppins-v24-latin-regular.woff2') format('woff2')}
+    @font-face{font-family:Poppins;font-weight:500;font-display:swap;src:url('shared/fonts/poppins-v24-latin-500.woff2') format('woff2')}
+    @font-face{font-family:Poppins;font-weight:600;font-display:swap;src:url('shared/fonts/poppins-v24-latin-600.woff2') format('woff2')}
+    @font-face{font-family:Poppins;font-weight:700;font-display:swap;src:url('shared/fonts/poppins-v24-latin-700.woff2') format('woff2')}
+    @font-face{font-family:Poppins;font-weight:800;font-display:swap;src:url('shared/fonts/poppins-v24-latin-800.woff2') format('woff2')}
+    @font-face{font-family:Poppins;font-weight:900;font-display:swap;src:url('shared/fonts/poppins-v24-latin-900.woff2') format('woff2')}
 
-  <!-- Anti-devtools (mantido fiel ao original) -->
-  <script>
-    !function(){
-      var e=window.matchMedia&&window.matchMedia("(min-width: 900px) and (pointer: fine)").matches;
-      document.addEventListener("contextmenu",function(e){e.preventDefault()});
-      document.addEventListener("selectstart",function(e){e.preventDefault()});
-      document.addEventListener("dragstart",function(e){e.preventDefault()});
-      document.addEventListener("keydown",function(e){
-        "F12"!==e.key
-          ?(e.ctrlKey&&e.shiftKey&&-1!==["I","J","C","K","E","M"].indexOf(e.key.toUpperCase())
-            ||e.ctrlKey&&-1!==["U","S","A","P"].indexOf(e.key.toUpperCase()))
-            &&e.preventDefault()
-          :e.preventDefault()
-      });
-      setInterval(function(){
-        e&&(window.outerWidth-window.innerWidth>200||window.outerHeight-window.innerHeight>200)
-          &&(document.body.innerHTML="");
-      },1500);
-    }();
-  </script>
+    /* Slider de marcas */
+    .benefits-slider{width:100%;overflow:hidden;margin:18px 0 20px;mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
+    .benefits-track{display:flex;gap:12px;width:max-content;animation:slider-scroll 22s linear infinite}
+    .benefits-track:hover{animation-play-state:paused}
+    @keyframes slider-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .benefit-item{flex-shrink:0;width:80px;height:80px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px}
+    .benefit-item img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1)}
+
+    /* Tela inicial */
+    .step-start{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0 0 30px!important;overflow-y:auto!important;background:linear-gradient(180deg,#E2D1FD 0%,#c8afe8 100%)}
+    .hero-image{width:100%;max-width:500px;display:block;border-radius:0 0 20px 20px;object-fit:cover}
+    .pg-title-purple{font-size:1.35rem;font-weight:800;color:#1f1235;text-align:center;line-height:1.3;margin:16px 24px 0;max-width:340px}
+    .start-title-accent{color:#882aff}
+    .start-highlight{font-size:.78rem;color:#555;text-align:center;margin-top:8px}
+    .cta-button{width:calc(100% - 48px);max-width:400px;margin:16px auto 0;padding:17px 24px;background:linear-gradient(90deg,#882aff,#a54bff,#a54bff,#882aff);background-size:200%;border:none;border-radius:14px;color:#fff;font-size:1.08rem;font-weight:800;letter-spacing:-.3px;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(136,42,255,.38);transition:transform .15s,box-shadow .15s;animation:btn-shimmer 6.5s ease infinite;position:relative;overflow:hidden}
+    .cta-button::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.25) 50%,transparent 70%);background-size:200%;animation:shimmer 6.5s ease infinite}
+    @keyframes btn-shimmer{0%,100%{background-position:0%}50%{background-position:100%}}
+    @keyframes shimmer{0%{background-position:-200%}100%{background-position:200%}}
+    .cta-button:active{transform:scale(.97);box-shadow:0 4px 12px rgba(136,42,255,.25)}
+
+    /* Seleção de kits */
+    .step-kits{background:var(--co-lilac-100)!important;overflow-y:auto!important;padding:20px 18px 100px!important}
+    .kits-header{text-align:center;margin-bottom:16px}
+    .kits-title{font-size:1.25rem;font-weight:800;color:var(--co-deep-900);line-height:1.2}
+    .kits-title span{color:var(--co-accent)}
+    .kits-subtitle{font-size:.75rem;color:var(--co-ink-500);margin-top:4px;line-height:1.4}
+    .kits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+    .kit-card{background:#fff;border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;border:2.5px solid transparent;transition:border-color .2s,transform .15s,box-shadow .2s;box-shadow:0 2px 8px rgba(0,0,0,.07);position:relative;user-select:none}
+    .kit-card.selected{border-color:var(--co-accent);box-shadow:0 4px 16px rgba(136,42,255,.22)}
+    .kit-card.selected::after{content:'✓';position:absolute;top:8px;right:8px;width:20px;height:20px;background:var(--co-accent);border-radius:50%;color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:20px;text-align:center}
+    .kit-card:active{transform:scale(.97)}
+    .kit-card img{width:100%;height:80px;object-fit:contain}
+    .kit-card-name{font-size:.72rem;font-weight:700;color:var(--co-deep-900);text-align:center;line-height:1.2}
+    .kit-card-tag{font-size:.6rem;font-weight:600;background:var(--co-accent-bg);color:var(--co-accent);padding:2px 8px;border-radius:99px}
+    .kits-footer{position:fixed;bottom:0;left:0;right:0;background:rgba(244,239,250,.95);backdrop-filter:blur(10px);padding:14px 20px 20px;border-top:1px solid #e0d4f5;z-index:100;max-width:500px;margin:0 auto;left:50%;transform:translateX(-50%)}
+    .kits-count-text{font-size:.72rem;color:var(--co-ink-500);text-align:center;margin-bottom:8px}
+    .kits-count-text strong{color:var(--co-accent)}
+    .kits-cta{width:100%;padding:15px 20px;background:linear-gradient(90deg,#882aff,#a54bff);border:none;border-radius:12px;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;font-family:Poppins,sans-serif;box-shadow:0 6px 18px rgba(136,42,255,.3);transition:transform .15s,opacity .15s}
+    .kits-cta:disabled{opacity:.5;cursor:not-allowed}
+    .kits-cta:not(:disabled):active{transform:scale(.98)}
+
+    /* Formulário / Dados pessoais */
+    .step-form{background:#fff!important;overflow-y:auto!important;padding:28px 20px 100px!important}
+    .form-title{font-size:1.25rem;font-weight:800;color:var(--co-deep-900);margin-bottom:4px}
+    .form-subtitle{font-size:.8rem;color:var(--co-ink-500);margin-bottom:20px;line-height:1.4}
+    .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+    .form-group label{font-size:.75rem;font-weight:600;color:var(--co-ink-700)}
+    .form-group input,.form-group select{width:100%;padding:13px 14px;border:1.5px solid #e0d4f5;border-radius:10px;font-size:.9rem;font-family:Poppins,sans-serif;color:var(--co-ink-900);background:#fff;outline:none;transition:border-color .2s}
+    .form-group input:focus,.form-group select:focus{border-color:var(--co-accent)}
+    .form-group input.invalid,.form-group select.invalid{border-color:#dc2626}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .form-cta{width:100%;padding:15px;background:linear-gradient(90deg,#882aff,#a54bff);border:none;border-radius:12px;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;font-family:Poppins,sans-serif;box-shadow:0 6px 18px rgba(136,42,255,.3);margin-top:8px;transition:transform .15s}
+    .form-cta:active{transform:scale(.98)}
+
+    /* Resumo / Checkout */
+    .step-checkout{background:var(--co-lilac-100)!important;overflow-y:auto!important;padding:20px 18px 30px!important}
+    .checkout-title{font-size:1.25rem;font-weight:800;color:var(--co-deep-900);margin-bottom:16px;text-align:center}
+    .checkout-kits-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .checkout-kit-item{background:#fff;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .checkout-kit-item img{width:50px;height:50px;object-fit:contain;border-radius:8px}
+    .checkout-kit-info{flex:1;min-width:0}
+    .checkout-kit-name{font-size:.82rem;font-weight:700;color:var(--co-deep-900)}
+    .checkout-kit-tag{font-size:.62rem;color:var(--co-accent);font-weight:600}
+    .checkout-summary{background:#fff;border-radius:14px;padding:14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .checkout-row{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--co-ink-500);padding:5px 0}
+    .checkout-row.total{font-size:1.1rem;font-weight:800;color:var(--co-deep-900);border-top:1px solid #eee;margin-top:6px;padding-top:10px}
+    .checkout-row.total span:last-child{color:var(--co-accent)}
+    .checkout-address{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .checkout-address-title{font-size:.75rem;font-weight:700;color:var(--co-ink-700);margin-bottom:4px}
+    .checkout-address-text{font-size:.8rem;color:var(--co-ink-500);line-height:1.5}
+    .pix-box{background:linear-gradient(135deg,#882aff,#a54bff);border-radius:16px;padding:20px;color:#fff;text-align:center;box-shadow:0 8px 24px rgba(136,42,255,.3)}
+    .pix-box-title{font-size:1rem;font-weight:800;margin-bottom:12px}
+    .pix-box-qr{width:140px;height:140px;background:#fff;border-radius:12px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#888}
+    .pix-copy-key{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:8px 10px;font-size:.7rem;font-family:monospace;word-break:break-all;margin-bottom:10px;text-align:left}
+    .pix-copy-btn{width:100%;padding:12px;background:#fff;color:var(--co-accent);border:none;border-radius:10px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s}
+    .pix-copy-btn:active{transform:scale(.97)}
+    .pix-waiting{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:.72rem;opacity:.9}
+    .pix-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;animation:pulse-dot 1.4s ease infinite}
+    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+    /* Popup */
+    .popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
+    .popup-overlay.show{display:flex}
+    .popup-content{background:#fff;border-radius:18px;padding:24px 20px;max-width:300px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .popup-title{font-size:1.1rem;font-weight:800;color:var(--co-deep-900);margin-bottom:8px}
+    .popup-message{font-size:.82rem;color:var(--co-ink-500);line-height:1.5;margin-bottom:16px}
+    .popup-button{width:100%;padding:12px;background:var(--co-accent);border:none;border-radius:10px;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;font-family:Poppins,sans-serif}
+
+    /* Loading overlay */
+    .universal-loading-overlay{position:fixed;inset:0;background:#E2D1FD;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s ease}
+    .universal-loading-overlay.hidden{opacity:0;pointer-events:none}
+    .universal-loading-spinner{width:40px;height:40px;border:4px solid rgba(136,42,255,.2);border-top-color:#882aff;border-radius:50%;animation:spin .85s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .universal-loading-text{font-size:.85rem;font-weight:600;color:#882aff;font-family:Poppins,sans-serif}
+
+    /* Navegação steps */
+    .page{display:none!important}
+    .page.active{display:flex!important}
+    .step-back{position:fixed;top:env(safe-area-inset-top,12px);left:16px;z-index:200;background:rgba(255,255,255,.3);border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(6px)}
+    .step-back svg{width:18px;height:18px;stroke:#1f1235;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .step-back.hidden{display:none!important}
+
+    /* Barra de progresso */
+    .progress-bar-wrap{position:fixed;top:0;left:0;right:0;height:3px;z-index:300;background:rgba(136,42,255,.15)}
+    .progress-bar-fill{height:100%;background:linear-gradient(90deg,#882aff,#a54bff);transition:width .4s ease}
+
+    /* Animações */
+    @keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    .animate-in > *{animation:fade-up .4s ease both}
+    .animate-in > *:nth-child(1){animation-delay:.05s}
+    .animate-in > *:nth-child(2){animation-delay:.12s}
+    .animate-in > *:nth-child(3){animation-delay:.19s}
+    .animate-in > *:nth-child(4){animation-delay:.26s}
+    .animate-in > *:nth-child(5){animation-delay:.33s}
+    .animate-in > *:nth-child(6){animation-delay:.40s}
+
+    /* Responsivo */
+    @media(min-width:500px){.kits-footer,.step-form .form-cta-wrap{max-width:500px;left:50%;transform:translateX(-50%)}}
+  </style>
 </head>
 <body>
 
-  <!-- Loading overlay -->
-  <div class="universal-loading-overlay" id="universalLoadingOverlay">
-    <div class="universal-loading-spinner"></div>
-    <p class="universal-loading-text">Carregando Kits...</p>
-  </div>
+<!-- Loading -->
+<div class="universal-loading-overlay" id="loadingOverlay">
+  <div class="universal-loading-spinner"></div>
+  <p class="universal-loading-text">Carregando Kits...</p>
+</div>
 
-  <!-- App -->
-  <div class="app">
-    <section class="page step-start active animate-in" id="stepStart"
-      data-step-id="start"
-      data-step-order="1"
-      data-step-label="Começar RC"
-      data-step-theme="purple">
+<!-- Barra de progresso -->
+<div class="progress-bar-wrap" id="progressWrap" style="display:none">
+  <div class="progress-bar-fill" id="progressFill" style="width:25%"></div>
+</div>
 
-      <img src="img/hero.webp" alt="Recebidos Club" class="hero-image">
+<!-- Botão voltar -->
+<button class="step-back hidden" id="btnBack" aria-label="Voltar">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</button>
 
-      <h2 class="pg-title-purple start-title">
-        Comece agora e faça parte da
-        <span class="start-title-accent">Recebidos Club</span>
-      </h2>
+<div class="app">
 
-      <!-- Benefits slider -->
-      <div class="benefits-slider" data-step-panel="benefits-slider" aria-label="Marcas parceiras em destaque">
-        <div class="benefits-track">
-          <div class="benefit-item"><img loading="lazy" src="img/a.webp" alt="SHEGLAM"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/b.webp" alt="Creamy"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/c.webp" alt="Marca parceira"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/d.webp" alt="Marca parceira"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/e.webp" alt="Marca parceira"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/f.webp" alt="Marca parceira"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/g.webp" alt="Marca parceira"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/h.webp" alt="Marca parceira"></div>
-          <div class="benefit-item"><img loading="lazy" src="img/i.webp" alt="Marca parceira"></div>
-          <!-- Duplicados para loop infinito do slider -->
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/a.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/b.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/c.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/d.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/e.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/f.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/g.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/h.webp" alt=""></div>
-          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/i.webp" alt=""></div>
-        </div>
-      </div>
-
-      <button type="button" class="cta-button start-cta" data-step-action="start-next">
-        Quero começar &rarr;
-      </button>
-      <p class="start-highlight">Leva menos de 5 minutos</p>
-    </section>
-
-    <div id="latePages" data-late-pages hidden aria-hidden="true"></div>
-  </div>
-
-  <!-- Popup -->
-  <div class="popup-overlay" id="popupOverlay">
-    <div class="popup-content">
-      <h3 class="popup-title" id="popupTitle">Atenção!</h3>
-      <p class="popup-message" id="popupMessage">Por favor, selecione pelo menos 2 kits para continuar.</p>
-      <div class="popup-buttons" id="popupButtons">
-        <button type="button" class="popup-button" id="popupCloseBtn">ENTENDI</button>
-      </div>
-      <div class="popup-buttons-double" id="popupButtonsDouble" style="display:none">
-        <button type="button" class="popup-button popup-button-secondary" id="popupCancelBtn">NÃO</button>
-        <button type="button" class="popup-button" id="popupConfirmBtn">SIM</button>
+  <!-- ===== STEP 1: INÍCIO ===== -->
+  <section class="page step-start active animate-in" id="stepStart">
+    <img src="img/hero.webp" alt="Recebidos Club" class="hero-image">
+    <h2 class="pg-title-purple start-title">
+      Comece agora e faça parte da
+      <span class="start-title-accent">Recebidos Club</span>
+    </h2>
+    <div class="benefits-slider" aria-label="Marcas parceiras">
+      <div class="benefits-track">
+        <div class="benefit-item"><img loading="lazy" src="img/a.webp" alt="SHEGLAM"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/b.webp" alt="Creamy"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/c.webp" alt="Marca parceira"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/d.webp" alt="Marca parceira"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/e.webp" alt="Marca parceira"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/f.webp" alt="Marca parceira"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/g.webp" alt="Marca parceira"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/h.webp" alt="Marca parceira"></div>
+        <div class="benefit-item"><img loading="lazy" src="img/i.webp" alt="Marca parceira"></div>
+        <!-- duplicado para loop contínuo -->
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/a.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/b.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/c.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/d.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/e.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/f.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/g.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/h.webp" alt=""></div>
+        <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/i.webp" alt=""></div>
       </div>
     </div>
+    <button type="button" class="cta-button" id="btnStart">Quero começar &rarr;</button>
+    <p class="start-highlight">Leva menos de 5 minutos</p>
+  </section>
+
+  <!-- ===== STEP 2: SELEÇÃO DE KITS ===== -->
+  <section class="page step-kits" id="stepKits">
+    <div class="kits-header">
+      <h2 class="kits-title">Escolha seus <span>kits</span> favoritos</h2>
+      <p class="kits-subtitle">Selecione pelo menos 2 kits para continuar</p>
+    </div>
+    <div class="kits-grid" id="kitsGrid">
+      <!-- Gerado pelo JS abaixo -->
+    </div>
+    <div class="kits-footer">
+      <p class="kits-count-text" id="kitsCountText">Selecione pelo menos <strong>2 kits</strong></p>
+      <button type="button" class="kits-cta" id="btnKitsContinue" disabled>Continuar &rarr;</button>
+    </div>
+  </section>
+
+  <!-- ===== STEP 3: DADOS PESSOAIS ===== -->
+  <section class="page step-form" id="stepForm">
+    <h2 class="form-title">Seus dados</h2>
+    <p class="form-subtitle">Preencha para receber seus kits em casa</p>
+    <form id="mainForm" novalidate>
+      <div class="form-group">
+        <label for="fieldName">Nome completo</label>
+        <input type="text" id="fieldName" name="name" placeholder="Seu nome completo" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="fieldEmail">E-mail</label>
+        <input type="email" id="fieldEmail" name="email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="fieldPhone">WhatsApp</label>
+        <input type="tel" id="fieldPhone" name="phone" placeholder="(11) 99999-9999" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label for="fieldCpf">CPF</label>
+        <input type="text" id="fieldCpf" name="cpf" placeholder="000.000.000-00" inputmode="numeric" maxlength="14">
+      </div>
+      <div class="form-group">
+        <label for="fieldCep">CEP</label>
+        <input type="text" id="fieldCep" name="cep" placeholder="00000-000" inputmode="numeric" maxlength="9">
+      </div>
+      <div class="form-group">
+        <label for="fieldStreet">Endereço</label>
+        <input type="text" id="fieldStreet" name="street" placeholder="Rua, Avenida...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fieldNumber">Número</label>
+          <input type="text" id="fieldNumber" name="number" placeholder="123" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label for="fieldComp">Complemento</label>
+          <input type="text" id="fieldComp" name="complement" placeholder="Apto, Bloco...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="fieldNeighborhood">Bairro</label>
+        <input type="text" id="fieldNeighborhood" name="neighborhood" placeholder="Seu bairro">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fieldCity">Cidade</label>
+          <input type="text" id="fieldCity" name="city" placeholder="Sua cidade">
+        </div>
+        <div class="form-group">
+          <label for="fieldState">Estado</label>
+          <select id="fieldState" name="state">
+            <option value="">UF</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="form-cta">Revisar pedido &rarr;</button>
+    </form>
+  </section>
+
+  <!-- ===== STEP 4: RESUMO E PAGAMENTO ===== -->
+  <section class="page step-checkout" id="stepCheckout">
+    <h2 class="checkout-title">Resumo do pedido</h2>
+    <div class="checkout-kits-list" id="checkoutKitsList"></div>
+    <div class="checkout-summary">
+      <div class="checkout-row"><span>Kits selecionados</span><span id="summaryKitsQty">—</span></div>
+      <div class="checkout-row"><span>Frete</span><span>Grátis</span></div>
+      <div class="checkout-row total"><span>Total</span><span id="summaryTotal">—</span></div>
+    </div>
+    <div class="checkout-address">
+      <p class="checkout-address-title">📦 Entregar em:</p>
+      <p class="checkout-address-text" id="summaryAddress">—</p>
+    </div>
+    <div class="pix-box" id="pixBox">
+      <p class="pix-box-title">Pague via PIX e garanta seus kits!</p>
+      <div class="pix-box-qr" id="pixQrWrap">
+        <span>QR Code</span>
+      </div>
+      <div class="pix-copy-key" id="pixKeyDisplay">Chave PIX será exibida aqui</div>
+      <button type="button" class="pix-copy-btn" id="btnCopyPix">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copiar chave PIX
+      </button>
+      <div class="pix-waiting">
+        <span class="pix-dot"></span>
+        <span>Aguardando pagamento...</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Popup -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-content">
+    <h3 class="popup-title" id="popupTitle">Atenção!</h3>
+    <p class="popup-message" id="popupMessage">Por favor, selecione pelo menos 2 kits para continuar.</p>
+    <div id="popupButtons">
+      <button type="button" class="popup-button" id="popupCloseBtn">ENTENDI</button>
+    </div>
   </div>
+</div>
 
-  <!-- Scripts externos necessários -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+  'use strict';
 
-  <!-- Shared JS (local) -->
-  <script defer src="shared/js/utils.js"></script>
-  <script defer src="shared/js/quiz-tracker.js"></script>
-  <script defer src="shared/js/svg-lib.js"></script>
-  <script defer src="shared/js/storage.js"></script>
-  <script defer src="shared/js/dom-flow.js"></script>
-  <script defer src="shared/js/tracking-adapter.js"></script>
-  <script defer src="shared/js/checkout-calculations.js"></script>
-  <script defer src="shared/js/checkout.js"></script>
-  <script defer src="shared/js/resume-popup.js"></script>
-  <script defer src="shared/js/form-persist.js"></script>
-  <script defer src="shared/js/rc-config.js"></script>
-  <script defer src="shared/js/pix-poll.js"></script>
-  <script defer src="shared/js/verify-guard.js"></script>
-  <script defer src="shared/js/vendor/qr-gen.js"></script>
-  <script defer src="shared/js/qr-local.js"></script>
+  /* ===== CONFIGURAÇÃO DOS KITS ===== */
+  const KITS = [
+    { id: 1,  name: 'Kit Pele Perfeita',    tag: 'Cuidados com a pele',   img: 'img/kits/1.webp',  price: 49.90 },
+    { id: 2,  name: 'Kit Maquiagem Glow',   tag: 'Maquiagem',             img: 'img/kits/2.webp',  price: 49.90 },
+    { id: 3,  name: 'Kit Cabelos Sedosos',  tag: 'Cabelos',               img: 'img/kits/3.webp',  price: 49.90 },
+    { id: 4,  name: 'Kit Corpo em Forma',   tag: 'Corpo',                 img: 'img/kits/4.webp',  price: 49.90 },
+    { id: 5,  name: 'Kit Sobrancelha',      tag: 'Make',                  img: 'img/kits/5.webp',  price: 49.90 },
+    { id: 6,  name: 'Kit Skincare Noturno', tag: 'Skincare',              img: 'img/kits/6.webp',  price: 49.90 },
+    { id: 7,  name: 'Kit Olhos Marcantes',  tag: 'Maquiagem',             img: 'img/kits/7.webp',  price: 49.90 },
+    { id: 8,  name: 'Kit Hidratação Total', tag: 'Hidratação',            img: 'img/kits/8.webp',  price: 49.90 },
+    { id: 9,  name: 'Kit Lábios Perfeitos', tag: 'Labial',                img: 'img/kits/9.webp',  price: 49.90 },
+    { id: 10, name: 'Kit Proteção Solar',   tag: 'Skincare',              img: 'img/kits/10.webp', price: 49.90 },
+    { id: 11, name: 'Kit Perfumaria',       tag: 'Fragrâncias',           img: 'img/kits/11.webp', price: 49.90 },
+    { id: 12, name: 'Kit Nail Art',         tag: 'Unhas',                 img: 'img/kits/12.webp', price: 49.90 },
+  ];
 
-  <!-- App JS (local) -->
-  <script defer src="js/rc-storage.js"></script>
-  <script defer src="js/app.js"></script>
-  <script defer src="js/rc-checkout.js"></script>
+  /* ===== CHAVE PIX (substitua pela sua) ===== */
+  const PIX_KEY = 'SEU_CPF_OU_EMAIL_PIX_AQUI';
+
+  /* ===== ESTADO ===== */
+  let selectedKits = new Set();
+  let formData = {};
+  let currentStep = 1;
+  const TOTAL_STEPS = 4;
+
+  /* ===== ELEMENTOS ===== */
+  const $ = id => document.getElementById(id);
+  const loadingOverlay = $('loadingOverlay');
+  const progressWrap   = $('progressWrap');
+  const progressFill   = $('progressFill');
+  const btnBack        = $('btnBack');
+
+  const steps = {
+    1: $('stepStart'),
+    2: $('stepKits'),
+    3: $('stepForm'),
+    4: $('stepCheckout'),
+  };
+
+  /* ===== PROGRESS ===== */
+  function setProgress(step) {
+    const pct = (step / TOTAL_STEPS) * 100;
+    progressFill.style.width = pct + '%';
+    progressWrap.style.display = step > 1 ? 'block' : 'none';
+    btnBack.classList.toggle('hidden', step <= 1);
+  }
+
+  /* ===== NAVIGATION ===== */
+  function goTo(step) {
+    if (steps[currentStep]) steps[currentStep].classList.remove('active');
+    currentStep = step;
+    const el = steps[step];
+    el.classList.add('active');
+    // trigger reflow para animação
+    el.classList.remove('animate-in');
+    void el.offsetWidth;
+    el.classList.add('animate-in');
+    el.scrollTop = 0;
+    setProgress(step);
+  }
+
+  btnBack.addEventListener('click', () => {
+    if (currentStep > 1) goTo(currentStep - 1);
+  });
+
+  /* ===== STEP 1: INÍCIO ===== */
+  $('btnStart').addEventListener('click', () => goTo(2));
+
+  /* ===== STEP 2: KITS ===== */
+  function buildKitsGrid() {
+    const grid = $('kitsGrid');
+    KITS.forEach(kit => {
+      const card = document.createElement('div');
+      card.className = 'kit-card';
+      card.dataset.kitId = kit.id;
+      card.innerHTML = `
+        <img src="${kit.img}" alt="${kit.name}" loading="lazy">
+        <span class="kit-card-name">${kit.name}</span>
+        <span class="kit-card-tag">${kit.tag}</span>
+      `;
+      card.addEventListener('click', () => toggleKit(kit.id, card));
+      grid.appendChild(card);
+    });
+  }
+
+  function toggleKit(id, card) {
+    if (selectedKits.has(id)) {
+      selectedKits.delete(id);
+      card.classList.remove('selected');
+    } else {
+      selectedKits.add(id);
+      card.classList.add('selected');
+    }
+    updateKitsFooter();
+  }
+
+  function updateKitsFooter() {
+    const count = selectedKits.size;
+    const countText = $('kitsCountText');
+    const btn = $('btnKitsContinue');
+    if (count === 0) {
+      countText.innerHTML = 'Selecione pelo menos <strong>2 kits</strong>';
+    } else if (count === 1) {
+      countText.innerHTML = '<strong>1 kit</strong> selecionado — selecione mais 1';
+    } else {
+      countText.innerHTML = `<strong>${count} kits</strong> selecionados`;
+    }
+    btn.disabled = count < 2;
+  }
+
+  $('btnKitsContinue').addEventListener('click', () => {
+    if (selectedKits.size < 2) {
+      showPopup('Atenção!', 'Selecione pelo menos 2 kits para continuar.');
+      return;
+    }
+    goTo(3);
+  });
+
+  buildKitsGrid();
+
+  /* ===== STEP 3: FORMULÁRIO ===== */
+  // Máscara de telefone
+  $('fieldPhone').addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'');
+    if (v.length > 11) v = v.slice(0,11);
+    if (v.length > 7)  v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    else if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    e.target.value = v;
+  });
+
+  // Máscara de CPF
+  $('fieldCpf').addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'');
+    if (v.length > 11) v = v.slice(0,11);
+    if (v.length > 9)      v = `${v.slice(0,3)}.${v.slice(3,6)}.${v.slice(6,9)}-${v.slice(9)}`;
+    else if (v.length > 6) v = `${v.slice(0,3)}.${v.slice(3,6)}.${v.slice(6)}`;
+    else if (v.length > 3) v = `${v.slice(0,3)}.${v.slice(3)}`;
+    e.target.value = v;
+  });
+
+  // Máscara de CEP + auto-complete
+  $('fieldCep').addEventListener('input', e => {
+    let v = e.target.value.replace(/\D/g,'');
+    if (v.length > 8) v = v.slice(0,8);
+    if (v.length > 5) v = `${v.slice(0,5)}-${v.slice(5)}`;
+    e.target.value = v;
+    if (v.replace('-','').length === 8) buscarCep(v.replace('-',''));
+  });
+
+  async function buscarCep(cep) {
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const d = await r.json();
+      if (!d.erro) {
+        $('fieldStreet').value      = d.logradouro || '';
+        $('fieldNeighborhood').value= d.bairro || '';
+        $('fieldCity').value        = d.localidade || '';
+        $('fieldState').value       = d.uf || '';
+        $('fieldNumber').focus();
+      }
+    } catch {}
+  }
+
+  $('mainForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const fields = ['fieldName','fieldEmail','fieldPhone','fieldCpf','fieldCep','fieldStreet','fieldNumber','fieldCity','fieldState'];
+    let valid = true;
+    fields.forEach(id => {
+      const el = $(id);
+      if (!el.value.trim()) { el.classList.add('invalid'); valid = false; }
+      else el.classList.remove('invalid');
+    });
+    if (!valid) {
+      showPopup('Campos obrigatórios', 'Preencha todos os campos obrigatórios para continuar.');
+      return;
+    }
+    formData = {
+      name:         $('fieldName').value.trim(),
+      email:        $('fieldEmail').value.trim(),
+      phone:        $('fieldPhone').value.trim(),
+      cpf:          $('fieldCpf').value.trim(),
+      cep:          $('fieldCep').value.trim(),
+      street:       $('fieldStreet').value.trim(),
+      number:       $('fieldNumber').value.trim(),
+      complement:   $('fieldComp').value.trim(),
+      neighborhood: $('fieldNeighborhood').value.trim(),
+      city:         $('fieldCity').value.trim(),
+      state:        $('fieldState').value.trim(),
+    };
+    buildCheckout();
+    goTo(4);
+  });
+
+  /* ===== STEP 4: CHECKOUT ===== */
+  function buildCheckout() {
+    const kitsList = $('checkoutKitsList');
+    kitsList.innerHTML = '';
+    let total = 0;
+
+    selectedKits.forEach(id => {
+      const kit = KITS.find(k => k.id === id);
+      if (!kit) return;
+      total += kit.price;
+      const item = document.createElement('div');
+      item.className = 'checkout-kit-item';
+      item.innerHTML = `
+        <img src="${kit.img}" alt="${kit.name}">
+        <div class="checkout-kit-info">
+          <p class="checkout-kit-name">${kit.name}</p>
+          <p class="checkout-kit-tag">${kit.tag}</p>
+        </div>
+        <strong style="color:var(--co-accent);font-size:.82rem;white-space:nowrap">R$ ${kit.price.toFixed(2).replace('.',',')}</strong>
+      `;
+      kitsList.appendChild(item);
+    });
+
+    $('summaryKitsQty').textContent = selectedKits.size + ' kit' + (selectedKits.size>1?'s':'');
+    $('summaryTotal').textContent   = 'R$ ' + total.toFixed(2).replace('.',',');
+
+    const addr = [
+      formData.street + ', ' + formData.number,
+      formData.complement,
+      formData.neighborhood,
+      formData.city + ' - ' + formData.state,
+      'CEP ' + formData.cep,
+    ].filter(Boolean).join('\n');
+    $('summaryAddress').textContent = addr;
+
+    // Chave PIX
+    $('pixKeyDisplay').textContent = PIX_KEY;
+  }
+
+  $('btnCopyPix').addEventListener('click', () => {
+    navigator.clipboard.writeText(PIX_KEY).then(() => {
+      const btn = $('btnCopyPix');
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✓ Copiado!';
+      btn.style.background = '#4ade80';
+      btn.style.color = '#166534';
+      setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
+    }).catch(() => {
+      showPopup('Copiar manualmente', 'Chave PIX: ' + PIX_KEY);
+    });
+  });
+
+  /* ===== POPUP ===== */
+  function showPopup(title, msg) {
+    $('popupTitle').textContent   = title;
+    $('popupMessage').textContent = msg;
+    $('popupOverlay').classList.add('show');
+  }
+  $('popupCloseBtn').addEventListener('click', () => $('popupOverlay').classList.remove('show'));
+  $('popupOverlay').addEventListener('click', e => { if (e.target === $('popupOverlay')) $('popupOverlay').classList.remove('show'); });
+
+  /* ===== INIT ===== */
+  window.addEventListener('load', () => {
+    setTimeout(() => loadingOverlay.classList.add('hidden'), 600);
+    setProgress(1);
+  });
+
+})();
+</script>
 
 </body>
 </html>
