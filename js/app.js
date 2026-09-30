@@ -23,30 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const orderKits = document.querySelector('[data-step-panel="shipping-order-kits"]');
         if (orderKits && typeof selectedKits !== 'undefined') {
             const kitBrands = {
-                1: { name: 'Wepink', color: '#e91e63' },
-                2: { name: 'SHEGLAM', color: '#c2185b' },
-                3: { name: 'SHEIN', color: '#111111' },
-                4: { name: 'EUDORA', color: '#a1887f' },
-                5: { name: 'WELLA', color: '#d32f2f' },
-                6: { name: 'Natura', color: '#f57c00' },
-                7: { name: 'Kérastase', color: '#1976d2' },
-                8: { name: 'Eudora', color: '#a1887f' },
-                9: { name: 'M.A.C', color: '#111111' },
-                10: { name: 'Wella', color: '#d32f2f' },
-                11: { name: 'Melissa', color: '#e91e63' },
-                12: { name: "L'Oreal", color: '#111111' }
+                1:  { name: 'Wepink',     color: '#e91e63', font: 'Dancing Script',    style: 'italic' },
+                2:  { name: 'SHEGLAM',    color: '#c2185b', font: 'Bebas Neue',         style: 'normal' },
+                3:  { name: 'SHEIN',      color: '#111111', font: 'Montserrat',          style: 'normal' },
+                4:  { name: 'EUDORA',     color: '#7b3f00', font: 'Playfair Display',   style: 'normal' },
+                5:  { name: 'WELLA',      color: '#d32f2f', font: 'Montserrat',          style: 'normal' },
+                6:  { name: 'Natura',     color: '#e65100', font: 'Nunito',              style: 'normal' },
+                7:  { name: 'Kérastase',  color: '#1565c0', font: 'Playfair Display',   style: 'italic' },
+                8:  { name: 'EUDORA',     color: '#7b3f00', font: 'Playfair Display',   style: 'normal' },
+                9:  { name: 'M.A.C',      color: '#111111', font: 'Bebas Neue',          style: 'normal' },
+                10: { name: 'WELLA',      color: '#d32f2f', font: 'Montserrat',          style: 'normal' },
+                11: { name: 'Melissa',    color: '#e91e63', font: 'Pacifico',            style: 'normal' },
+                12: { name: "L'ORÉAL",    color: '#111111', font: 'Raleway',             style: 'normal' }
             };
-            
-            let html = '<div class="rc-order-kits-rail">';
-            Array.from(selectedKits).forEach(idx => {
-                const brand = kitBrands[idx] || { name: 'Marca', color: '#111' };
-                html += `
-                  <div class="rc-order-kit-item">
-                    <span class="rc-order-kit-brand" style="color: ${brand.color};">${brand.name}</span>
-                    <img src="img/kits/kit_dl_${idx}.webp" alt="${brand.name}">
-                  </div>
-                `;
-            });
+
+            const makeItem = (idx) => {
+                const brand = kitBrands[idx] || { name: 'Marca', color: '#111', font: 'Poppins', style: 'normal' };
+                return `<div class="rc-order-kit-item">
+                    <span class="rc-order-kit-brand" style="color:${brand.color};font-family:'${brand.font}',sans-serif;font-style:${brand.style};">${brand.name}</span>
+                    <img src="img/kits/kit_dl_${idx}.webp" alt="${brand.name}" loading="lazy">
+                  </div>`;
+            };
+
+            const items = Array.from(selectedKits);
+            // Duplicate for seamless loop
+            const allItems = [...items, ...items, ...items];
+            let html = '<div class="rc-order-kits-rail rc-order-kits-rail--auto">';
+            allItems.forEach(idx => { html += makeItem(idx); });
             html += '</div>';
             orderKits.innerHTML = html;
         }
@@ -645,29 +648,117 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Step 7: Address ---
-  const addressInputs = document.querySelectorAll('section[data-step-id="address"] input');
-  const btnAddressConf = document.querySelector('.address-confirm-btn');
-  const btnAddressAccept = document.querySelector('.address-accept');
-  
-  if (addressInputs.length > 0 && btnAddressConf) {
-    const checkAddress = () => {
-      const someFilled = Array.from(addressInputs).some(i => i.value.trim() !== '');
-      if (someFilled) {
-        btnAddressConf.classList.remove('btn-disabled');
-        btnAddressConf.disabled = false;
-      }
-    };
-    addressInputs.forEach(inp => inp.addEventListener('input', checkAddress));
-    
-    if (btnAddressAccept) {
-        btnAddressAccept.addEventListener('click', () => {
-             btnAddressAccept.classList.toggle('active');
-        });
-    }
+  const cepInput          = document.querySelector('#addressCep');
+  const emailInput        = document.querySelector('#addressEmail');
+  const whatsappInput     = document.querySelector('#addressWhatsapp');
+  const streetInput       = document.querySelector('#addressStreet');
+  const neighborhoodInput = document.querySelector('#addressNeighborhood');
+  const cityInput         = document.querySelector('#addressCity');
+  const stateInput        = document.querySelector('#addressState');
+  const numberInput       = document.querySelector('#addressNumber');
+  const addressFields     = document.querySelector('[data-step-panel="address-fields"]');
+  const addressCepField   = document.querySelector('[data-step-panel="address-cep-field"]');
+  const btnAddressConf    = document.querySelector('.address-confirm-btn');
+  const btnAddressAccept  = document.querySelector('.address-accept');
 
-    btnAddressConf.addEventListener('click', () => {
-      goToSection('shipping');
+  function validateEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+  }
+  function validatePhone(v) {
+    return v.replace(/\D/g,'').length >= 11;
+  }
+  function checkAddressForm() {
+    if (!btnAddressConf) return;
+    const emailOk  = emailInput  && validateEmail(emailInput.value);
+    const phoneOk  = whatsappInput && validatePhone(whatsappInput.value);
+    const cepOk    = cepInput    && cepInput.value.replace(/\D/g,'').length === 8;
+    const streetOk = streetInput && streetInput.value.trim() !== '';
+    const numberOk = numberInput && numberInput.value.trim() !== '';
+    if (emailOk && phoneOk && cepOk && streetOk && numberOk) {
+      btnAddressConf.classList.remove('btn-disabled');
+      btnAddressConf.disabled = false;
+    } else {
+      btnAddressConf.classList.add('btn-disabled');
+      btnAddressConf.disabled = true;
+    }
+  }
+
+  // CEP auto-fill via ViaCEP (browser fetch — no sandbox issue)
+  if (cepInput) {
+    cepInput.addEventListener('input', () => {
+      let v = cepInput.value.replace(/\D/g,'');
+      if (v.length > 5) v = v.slice(0,5) + '-' + v.slice(5,8);
+      cepInput.value = v;
+      cepInput.classList.remove('invalid');
+      const digits = v.replace(/\D/g,'');
+      if (digits.length === 8) {
+        if (addressCepField) addressCepField.classList.add('is-searching');
+        fetch(`https://viacep.com.br/ws/${digits}/json/`)
+          .then(r => r.json())
+          .then(data => {
+            if (addressCepField) addressCepField.classList.remove('is-searching');
+            if (!data.erro) {
+              if (streetInput)       streetInput.value       = data.logradouro || '';
+              if (neighborhoodInput) neighborhoodInput.value = data.bairro     || '';
+              if (cityInput)         cityInput.value         = data.localidade  || '';
+              if (stateInput)        stateInput.value        = data.uf          || '';
+              if (addressFields)     addressFields.classList.add('visible');
+              if (numberInput) setTimeout(() => numberInput.focus(), 150);
+            } else {
+              cepInput.classList.add('invalid');
+            }
+            checkAddressForm();
+          })
+          .catch(() => {
+            if (addressCepField) addressCepField.classList.remove('is-searching');
+          });
+      }
+      checkAddressForm();
     });
+  }
+
+  // Email validation with live feedback
+  if (emailInput) {
+    emailInput.addEventListener('blur', () => {
+      if (emailInput.value.length > 0 && !validateEmail(emailInput.value))
+        emailInput.classList.add('invalid');
+      else emailInput.classList.remove('invalid');
+    });
+    emailInput.addEventListener('input', () => {
+      if (validateEmail(emailInput.value)) emailInput.classList.remove('invalid');
+      checkAddressForm();
+    });
+  }
+
+  // WhatsApp mask + validation
+  if (whatsappInput) {
+    whatsappInput.setAttribute('inputmode','numeric');
+    whatsappInput.addEventListener('input', () => {
+      let v = whatsappInput.value.replace(/\D/g,'');
+      if (v.length > 11) v = v.slice(0,11);
+      if      (v.length > 7) v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+      else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+      else if (v.length > 0) v = '(' + v;
+      whatsappInput.value = v;
+      if (validatePhone(whatsappInput.value)) whatsappInput.classList.remove('invalid');
+      checkAddressForm();
+    });
+    whatsappInput.addEventListener('blur', () => {
+      if (whatsappInput.value.length > 0 && !validatePhone(whatsappInput.value))
+        whatsappInput.classList.add('invalid');
+    });
+  }
+
+  // Other address inputs
+  [streetInput, neighborhoodInput, cityInput, stateInput, numberInput,
+   document.querySelector('#addressComplement')].filter(Boolean)
+    .forEach(inp => inp.addEventListener('input', checkAddressForm));
+
+  if (btnAddressAccept) {
+    btnAddressAccept.addEventListener('click', () => btnAddressAccept.classList.toggle('active'));
+  }
+  if (btnAddressConf) {
+    btnAddressConf.addEventListener('click', () => { goToSection('shipping'); });
   }
 
   // --- Step 8: Shipping ---
