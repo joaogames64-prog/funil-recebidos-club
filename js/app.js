@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Options click selection
-      const options = step.querySelectorAll('.profile-option-card, .profile-grid-item, .profile-category-card');
+      const options = step.querySelectorAll('.profile-option-card, .profile-grid-item, .profile-category-card, button[data-choice], button[data-step-panel="profile-product-card"], .profile-option');
       options.forEach(opt => {
         opt.addEventListener('click', (e) => {
           e.preventDefault();
@@ -244,15 +244,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Testimonials Animator (Step 4 - rc-testi)
   const testiSlides = document.querySelectorAll('.rc-testi-slide');
+  const testiDots = document.querySelectorAll('.rc-testi-dots i');
   if (testiSlides.length > 0) {
     let currentTesti = 0;
-    setInterval(() => {
+    function showTesti() {
       testiSlides.forEach((s, i) => {
         if (i === currentTesti) s.classList.add('is-active');
         else s.classList.remove('is-active');
       });
+      if (testiDots.length > 0) {
+         testiDots.forEach((d, i) => {
+            if (i === currentTesti) d.classList.add('is-active');
+            else d.classList.remove('is-active');
+         });
+      }
       currentTesti = (currentTesti + 1) % testiSlides.length;
-    }, 3000);
+    }
+    showTesti(); // Run immediately
+    setInterval(showTesti, 4000);
   }
 
   // Testimonials Marquee (Step 5 - profile-check)
