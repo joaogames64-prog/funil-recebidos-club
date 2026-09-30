@@ -20,23 +20,31 @@
     @font-face{font-family:Poppins;font-weight:800;font-display:swap;src:url('shared/fonts/poppins-v24-latin-800.woff2') format('woff2')}
     @font-face{font-family:Poppins;font-weight:900;font-display:swap;src:url('shared/fonts/poppins-v24-latin-900.woff2') format('woff2')}
 
-    /* Slider de marcas */
-    .benefits-slider{width:100%;overflow:hidden;margin:18px 0 20px;mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
-    .benefits-track{display:flex;gap:12px;width:max-content;animation:slider-scroll 22s linear infinite}
-    .benefits-track:hover{animation-play-state:paused}
-    @keyframes slider-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    .benefit-item{flex-shrink:0;width:80px;height:80px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px}
-    .benefit-item img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1)}
+    /* Slider de marcas — fiel ao original */
+    .benefits-slider{overflow:hidden;width:calc(100% + 56px);margin-left:-28px;margin-right:-28px}
+    .benefits-track{display:flex;gap:.5rem;width:max-content;animation:marquee-x 24s linear infinite}
+    @keyframes marquee-x{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .benefit-item{flex:0 0 auto;width:64px;height:64px;display:flex;align-items:center;justify-content:center}
+    .benefit-item img{width:64px;height:64px;object-fit:contain;display:block}
 
-    /* Tela inicial */
-    .step-start{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0 0 30px!important;overflow-y:auto!important;background:linear-gradient(180deg,#E2D1FD 0%,#c8afe8 100%)}
-    .hero-image{width:100%;max-width:500px;display:block;border-radius:0 0 20px 20px;object-fit:cover}
-    .pg-title-purple{font-size:1.35rem;font-weight:800;color:#1f1235;text-align:center;line-height:1.3;margin:16px 24px 0;max-width:340px}
-    .start-title-accent{color:#882aff}
-    .start-highlight{font-size:.78rem;color:#555;text-align:center;margin-top:8px}
-    .cta-button{width:calc(100% - 48px);max-width:400px;margin:16px auto 0;padding:17px 24px;background:linear-gradient(90deg,#882aff,#a54bff,#a54bff,#882aff);background-size:200%;border:none;border-radius:14px;color:#fff;font-size:1.08rem;font-weight:800;letter-spacing:-.3px;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(136,42,255,.38);transition:transform .15s,box-shadow .15s;animation:btn-shimmer 6.5s ease infinite;position:relative;overflow:hidden}
+    /* Tela inicial — idêntica ao original */
+    [data-step-id=start]{
+      min-height:0;gap:1rem;overflow:auto;
+      padding:44px 28px 22px!important;
+      background-color:var(--co-lilac-300);
+      background-image:url('img/back.webp');
+      background-repeat:no-repeat;
+      background-position:center bottom;
+      background-size:cover;
+    }
+    [data-step-id=start] .hero-image{width:min(56%,215px);aspect-ratio:328/196;object-fit:contain;margin:0 auto;flex-shrink:0;display:block}
+    [data-step-id=start] .start-title{color:var(--co-accent-dark);font-size:1.5rem;font-weight:700;line-height:1.2;text-align:center;align-self:center}
+    [data-step-id=start] .start-title-accent{color:var(--co-accent)}
+    [data-step-id=start] .benefits-slider{width:calc(100% + 56px);margin-left:-28px;margin-right:-28px}
+    [data-step-id=start] .start-highlight{font-size:.8rem;font-weight:500;color:#88789c;text-align:center;line-height:1.2;align-self:center}
+    .pg-title-purple{color:var(--co-accent);line-height:1}
+    .cta-button{width:100%;padding:17px 24px;background:linear-gradient(90deg,#882aff,#a54bff,#a54bff,#882aff);background-size:200%;border:none;border-radius:50px;color:#fff;font-size:1.08rem;font-weight:800;letter-spacing:-.3px;cursor:pointer;font-family:Poppins,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(136,42,255,.38);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
     .cta-button::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.25) 50%,transparent 70%);background-size:200%;animation:shimmer 6.5s ease infinite}
-    @keyframes btn-shimmer{0%,100%{background-position:0%}50%{background-position:100%}}
     @keyframes shimmer{0%{background-position:-200%}100%{background-position:200%}}
     .cta-button:active{transform:scale(.97);box-shadow:0 4px 12px rgba(136,42,255,.25)}
 
@@ -161,7 +169,7 @@
 <div class="app">
 
   <!-- ===== STEP 1: INÍCIO ===== -->
-  <section class="page step-start active animate-in" id="stepStart">
+  <section class="page step-start active animate-in" id="stepStart" data-step-id="start">
     <img src="img/hero.webp" alt="Recebidos Club" class="hero-image">
     <h2 class="pg-title-purple start-title">
       Comece agora e faça parte da
