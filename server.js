@@ -35,7 +35,7 @@ function generateCPF() {
 
 app.post('/api/checkout', async (req, res) => {
   try {
-    const { customer, planKey, shippingKey, hasBump } = req.body;
+    const { customer, planKey, shippingKey, hasBump, utms } = req.body;
 
     if (!customer || !customer.email || !customer.phone) {
       return res.status(400).json({ error: "Dados de contato do cliente incompletos." });
@@ -68,10 +68,23 @@ app.post('/api/checkout', async (req, res) => {
     // Clean phone number (remove everything but digits)
     const cleanedPhone = customer.phone.replace(/\D/g, '');
 
+    // Build externalId with UTM tracking info
+    const utmSource = (utms && utms.utm_source) || 'organic';
+    const utmMedium = (utms && utms.utm_medium) || '';
+    const utmCampaign = (utms && utms.utm_campaign) || '';
+    const utmSrc = (utms && utms.src) || '';
+    const utmSck = (utms && utms.sck) || '';
+    const utmParts = [`src_${utmSource}`];
+    if (utmMedium) utmParts.push(`med_${utmMedium}`);
+    if (utmCampaign) utmParts.push(`cmp_${utmCampaign}`);
+    if (utmSrc) utmParts.push(`s_${utmSrc}`);
+    if (utmSck) utmParts.push(`k_${utmSck}`);
+    const externalId = `lead_${Date.now()}_${utmParts.join('_')}`;
+
     const payload = {
       amount: totalAmount,
       expiresIn: 3600, // 1h
-      externalId: `lead_${Date.now()}_${Math.floor(Math.random()*1000)}`,
+      externalId: externalId,
       customer: {
         taxId: validCpf,
         name: customer.name || "Cliente Recebidos",

@@ -1,4 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // --- UTM Tracking: capture from URL and persist in sessionStorage ---
+  (function captureUTMs() {
+    const params = new URLSearchParams(window.location.search);
+    const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'src', 'sck'];
+    utmKeys.forEach(key => {
+      const val = params.get(key);
+      if (val) {
+        sessionStorage.setItem(key, val);
+      }
+    });
+  })();
+
+  function getStoredUTMs() {
+    const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'src', 'sck'];
+    const utms = {};
+    utmKeys.forEach(key => {
+      const val = sessionStorage.getItem(key);
+      if (val) utms[key] = val;
+    });
+    return utms;
+  }
+
   // Navigation State
   const sections = Array.from(document.querySelectorAll('section.page'));
   let currentSection = sections[0];
@@ -931,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
                const response = await fetch(API_URL, {
                    method: 'POST',
                    headers: { 'Content-Type': 'application/json' },
-                   body: JSON.stringify({ customer, planKey, shippingKey, hasBump, tracking: (window.getTrackingParams ? window.getTrackingParams() : {}) })
+                   body: JSON.stringify({ customer, planKey, shippingKey, hasBump, utms: getStoredUTMs() })
                });
                const data = await response.json();
                
