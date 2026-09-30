@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#E2D1FD">
+  <title>Recebidos Club</title>
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- Fonts (local) -->
+  <link rel="preload" href="shared/fonts/poppins-v24-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="shared/fonts/poppins-v24-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="shared/fonts/poppins-v24-latin-800.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Hero image preload -->
+  <link rel="preload" href="img/hero.webp" as="image">
+
+  <!-- CSS (local) -->
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="preload" href="css/support-chat.css" as="style" onload='this.onload=null,this.rel="stylesheet"'>
+
+  <!-- Anti-devtools (mantido fiel ao original) -->
+  <script>
+    !function(){
+      var e=window.matchMedia&&window.matchMedia("(min-width: 900px) and (pointer: fine)").matches;
+      document.addEventListener("contextmenu",function(e){e.preventDefault()});
+      document.addEventListener("selectstart",function(e){e.preventDefault()});
+      document.addEventListener("dragstart",function(e){e.preventDefault()});
+      document.addEventListener("keydown",function(e){
+        "F12"!==e.key
+          ?(e.ctrlKey&&e.shiftKey&&-1!==["I","J","C","K","E","M"].indexOf(e.key.toUpperCase())
+            ||e.ctrlKey&&-1!==["U","S","A","P"].indexOf(e.key.toUpperCase()))
+            &&e.preventDefault()
+          :e.preventDefault()
+      });
+      setInterval(function(){
+        e&&(window.outerWidth-window.innerWidth>200||window.outerHeight-window.innerHeight>200)
+          &&(document.body.innerHTML="");
+      },1500);
+    }();
+  </script>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div class="universal-loading-overlay" id="universalLoadingOverlay">
+    <div class="universal-loading-spinner"></div>
+    <p class="universal-loading-text">Carregando Kits...</p>
+  </div>
+
+  <!-- App -->
+  <div class="app">
+    <section class="page step-start active animate-in" id="stepStart"
+      data-step-id="start"
+      data-step-order="1"
+      data-step-label="Começar RC"
+      data-step-theme="purple">
+
+      <img src="img/hero.webp" alt="Recebidos Club" class="hero-image">
+
+      <h2 class="pg-title-purple start-title">
+        Comece agora e faça parte da
+        <span class="start-title-accent">Recebidos Club</span>
+      </h2>
+
+      <!-- Benefits slider -->
+      <div class="benefits-slider" data-step-panel="benefits-slider" aria-label="Marcas parceiras em destaque">
+        <div class="benefits-track">
+          <div class="benefit-item"><img loading="lazy" src="img/a.webp" alt="SHEGLAM"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/b.webp" alt="Creamy"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/c.webp" alt="Marca parceira"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/d.webp" alt="Marca parceira"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/e.webp" alt="Marca parceira"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/f.webp" alt="Marca parceira"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/g.webp" alt="Marca parceira"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/h.webp" alt="Marca parceira"></div>
+          <div class="benefit-item"><img loading="lazy" src="img/i.webp" alt="Marca parceira"></div>
+          <!-- Duplicados para loop infinito do slider -->
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/a.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/b.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/c.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/d.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/e.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/f.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/g.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/h.webp" alt=""></div>
+          <div class="benefit-item" aria-hidden="true"><img loading="lazy" src="img/i.webp" alt=""></div>
+        </div>
+      </div>
+
+      <button type="button" class="cta-button start-cta" data-step-action="start-next">
+        Quero começar &rarr;
+      </button>
+      <p class="start-highlight">Leva menos de 5 minutos</p>
+    </section>
+
+    <div id="latePages" data-late-pages hidden aria-hidden="true"></div>
+  </div>
+
+  <!-- Popup -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-content">
+      <h3 class="popup-title" id="popupTitle">Atenção!</h3>
+      <p class="popup-message" id="popupMessage">Por favor, selecione pelo menos 2 kits para continuar.</p>
+      <div class="popup-buttons" id="popupButtons">
+        <button type="button" class="popup-button" id="popupCloseBtn">ENTENDI</button>
+      </div>
+      <div class="popup-buttons-double" id="popupButtonsDouble" style="display:none">
+        <button type="button" class="popup-button popup-button-secondary" id="popupCancelBtn">NÃO</button>
+        <button type="button" class="popup-button" id="popupConfirmBtn">SIM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts externos necessários -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Shared JS (local) -->
+  <script defer src="shared/js/utils.js"></script>
+  <script defer src="shared/js/quiz-tracker.js"></script>
+  <script defer src="shared/js/svg-lib.js"></script>
+  <script defer src="shared/js/storage.js"></script>
+  <script defer src="shared/js/dom-flow.js"></script>
+  <script defer src="shared/js/tracking-adapter.js"></script>
+  <script defer src="shared/js/checkout-calculations.js"></script>
+  <script defer src="shared/js/checkout.js"></script>
+  <script defer src="shared/js/resume-popup.js"></script>
+  <script defer src="shared/js/form-persist.js"></script>
+  <script defer src="shared/js/rc-config.js"></script>
+  <script defer src="shared/js/pix-poll.js"></script>
+  <script defer src="shared/js/verify-guard.js"></script>
+  <script defer src="shared/js/vendor/qr-gen.js"></script>
+  <script defer src="shared/js/qr-local.js"></script>
+
+  <!-- App JS (local) -->
+  <script defer src="js/rc-storage.js"></script>
+  <script defer src="js/app.js"></script>
+  <script defer src="js/rc-checkout.js"></script>
+
+</body>
+</html>
