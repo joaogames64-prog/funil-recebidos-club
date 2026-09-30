@@ -647,10 +647,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnShippingConf && msBody) {
     btnShippingConf.addEventListener('click', () => {
-      // Oculta os itens do topo (Kits e o botão de Confirmar Vaga)
-      btnShippingConf.style.display = 'none';
-      const card = document.querySelector('.rc-ms-card');
-      if (card) card.style.display = 'none';
+      // Oculta os itens do topo (Kits e o botão de Confirmar Vaga) mas NÃO oculta o card inteiro, senão o msBody some
+      const elementsToHide = document.querySelectorAll('.rc-shipping-subtitle, .rc-ms-kits, .rc-ms-cta, .rc-social-proof, .rc-ms-safe');
+      elementsToHide.forEach(el => el.style.display = 'none');
       
       // Mostra o body multi-step
       msBody.removeAttribute('aria-hidden');
