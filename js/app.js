@@ -21,33 +21,35 @@ document.addEventListener('DOMContentLoaded', () => {
         startApprovalChat();
     } else if (id === 'shipping') {
         const orderKits = document.querySelector('[data-step-panel="shipping-order-kits"]');
-        if (orderKits && typeof selectedKits !== 'undefined') {
-            const kitBrands = {
-                1:  { name: 'Wepink',     color: '#e91e63', font: 'Dancing Script',    style: 'italic' },
-                2:  { name: 'SHEGLAM',    color: '#c2185b', font: 'Bebas Neue',         style: 'normal' },
-                3:  { name: 'SHEIN',      color: '#111111', font: 'Montserrat',          style: 'normal' },
-                4:  { name: 'EUDORA',     color: '#7b3f00', font: 'Playfair Display',   style: 'normal' },
-                5:  { name: 'WELLA',      color: '#d32f2f', font: 'Montserrat',          style: 'normal' },
-                6:  { name: 'Natura',     color: '#e65100', font: 'Nunito',              style: 'normal' },
-                7:  { name: 'Kérastase',  color: '#1565c0', font: 'Playfair Display',   style: 'italic' },
-                8:  { name: 'EUDORA',     color: '#7b3f00', font: 'Playfair Display',   style: 'normal' },
-                9:  { name: 'M.A.C',      color: '#111111', font: 'Bebas Neue',          style: 'normal' },
-                10: { name: 'WELLA',      color: '#d32f2f', font: 'Montserrat',          style: 'normal' },
-                11: { name: 'Melissa',    color: '#e91e63', font: 'Pacifico',            style: 'normal' },
-                12: { name: "L'ORÉAL",    color: '#111111', font: 'Raleway',             style: 'normal' }
-            };
+        if (orderKits) {
+            const kitBrands = [
+                { id: 1,  name: 'Wepink',     color: '#e91e63', font: 'Dancing Script',    style: 'italic' }, // 0
+                { id: 2,  name: 'SHEGLAM',    color: '#c2185b', font: 'Bebas Neue',         style: 'normal' }, // 1
+                { id: 3,  name: 'Wepink',     color: '#e91e63', font: 'Dancing Script',     style: 'italic' }, // 2
+                { id: 4,  name: 'SHEIN',      color: '#111111', font: 'Montserrat',          style: 'normal' }, // 3
+                { id: 6,  name: 'Natura',     color: '#e65100', font: 'Nunito',              style: 'normal' }, // 4
+                { id: 7,  name: 'Kérastase',  color: '#1565c0', font: 'Playfair Display',   style: 'italic' }, // 5
+                { id: 8,  name: 'EUDORA',     color: '#7b3f00', font: 'Playfair Display',   style: 'normal' }, // 6
+                { id: 10, name: 'WELLA',      color: '#d32f2f', font: 'Montserrat',          style: 'normal' }, // 7
+                { id: 11, name: 'Melissa',    color: '#e91e63', font: 'Pacifico',            style: 'normal' }, // 8
+                { id: 12, name: "L'ORÉAL",    color: '#111111', font: 'Raleway',             style: 'normal' }  // 9
+            ];
 
-            const makeItem = (idx) => {
-                const brand = kitBrands[idx] || { name: 'Marca', color: '#111', font: 'Poppins', style: 'normal' };
+            const makeItem = (brandIdx) => {
+                const brand = kitBrands[brandIdx] || kitBrands[0];
                 return `<div class="rc-order-kit-item">
                     <span class="rc-order-kit-brand" style="color:${brand.color};font-family:'${brand.font}',sans-serif;font-style:${brand.style};">${brand.name}</span>
-                    <img src="img/kits/kit_dl_${idx}.webp" alt="${brand.name}" loading="lazy">
+                    <img src="img/kits/kit_dl_${brand.id}.webp" alt="${brand.name}" loading="lazy" onerror="this.style.display='none'">
                   </div>`;
             };
 
-            const items = Array.from(selectedKits);
+            // Use selected kits or all 10 as default
+            const selected = (typeof selectedKits !== 'undefined' && selectedKits.size > 0)
+                ? Array.from(selectedKits)
+                : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
             // Duplicate for seamless loop
-            const allItems = [...items, ...items, ...items];
+            const allItems = [...selected, ...selected, ...selected];
             let html = '<div class="rc-order-kits-rail rc-order-kits-rail--auto">';
             allItems.forEach(idx => { html += makeItem(idx); });
             html += '</div>';
@@ -101,8 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function createMediaMsg() {
       let imgTags = '';
       if (typeof selectedKits !== 'undefined' && selectedKits.size > 0) {
+        const kitBrandsMap = [
+            { id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 6 },
+            { id: 7 }, { id: 8 }, { id: 10 }, { id: 11 }, { id: 12 }
+        ];
         Array.from(selectedKits).slice(0, 4).forEach(idx => {
-          imgTags += `<img src="img/kits/kit_dl_${idx+1}.webp" alt="Kit ${idx+1}">`;
+          const actualId = kitBrandsMap[idx] ? kitBrandsMap[idx].id : 1;
+          imgTags += `<img src="img/kits/kit_dl_${actualId}.webp" alt="Kit ${actualId}">`;
         });
       } else {
         imgTags = `<img src="img/kits/kit_dl_1.webp" alt="Kit"><img src="img/kits/kit_dl_2.webp" alt="Kit"><img src="img/kits/kit_dl_3.webp" alt="Kit">`;

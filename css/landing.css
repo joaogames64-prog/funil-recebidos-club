@@ -65,3 +65,22 @@
 
 /* Fix overlap between hint and bump card */
 .rc-bump-card { margin-top: 24px !important; }
+
+/* Fix overlap between title and subtitle in steps 1/2/3 (override base CSS negative margin & low line-height) */
+.rc-ms-inner .rc-ms-qtitle,
+.rc-ms-step .rc-ms-qtitle,
+h3.rc-ms-qtitle {
+  margin: 0 0 10px 0 !important;
+  line-height: 1.35 !important;
+  padding-bottom: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+.rc-ms-inner .rc-ms-qhint,
+.rc-ms-step .rc-ms-qhint,
+p.rc-ms-qhint {
+  margin: 0 0 20px 0 !important;
+  line-height: 1.45 !important;
+  display: block !important;
+}
