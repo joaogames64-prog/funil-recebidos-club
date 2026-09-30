@@ -62,21 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnKitsConfirm) {
     btnKitsConfirm.addEventListener('click', () => {
-      // Build carousel
+      // Build continuous carousel
       const rail = document.querySelector('[data-step-panel="kit-confirmation-carousel-rail-top"]');
       if (rail) {
         rail.innerHTML = '';
-        Array.from(selectedKits).forEach(idx => {
-          const kitCard = kitCards[idx];
-          const imgPath = kitCard.querySelector('img').src;
-          const item = document.createElement('div');
-          item.className = 'kit-confirmation-carousel-item';
-          const img = document.createElement('img');
-          img.src = imgPath;
-          item.appendChild(img);
-          rail.appendChild(item);
-        });
+        // Duplicate multiple times for continuous marquee effect
+        for (let i = 0; i < 4; i++) {
+            Array.from(selectedKits).forEach(idx => {
+              const kitCard = kitCards[idx];
+              const imgPath = kitCard.querySelector('img').src;
+              const item = document.createElement('div');
+              item.className = 'kit-confirmation-carousel-item';
+              const img = document.createElement('img');
+              img.src = imgPath;
+              item.appendChild(img);
+              rail.appendChild(item);
+            });
+        }
       }
+
 
       // Update total price (R$235.90 per kit as seen in original)
       const totalPrice = (selectedKits.size * 235.90).toFixed(2).replace('.', ',');
@@ -236,3 +240,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+  // Testimonials Animator (Step 4 - rc-testi)
+  const testiSlides = document.querySelectorAll('.rc-testi-slide');
+  if (testiSlides.length > 0) {
+    let currentTesti = 0;
+    setInterval(() => {
+      testiSlides.forEach((s, i) => {
+        if (i === currentTesti) s.classList.add('is-active');
+        else s.classList.remove('is-active');
+      });
+      currentTesti = (currentTesti + 1) % testiSlides.length;
+    }, 3000);
+  }
+
+  // Testimonials Marquee (Step 5 - profile-check)
+  const profileTrack = document.querySelector('.profile-check-testimonials-track');
+  if (profileTrack) {
+    profileTrack.style.animation = 'marquee-x 20s linear infinite';
+  }
