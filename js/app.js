@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-
       // Update total price (R$235.90 per kit as seen in original)
       const totalPrice = (selectedKits.size * 235.90).toFixed(2).replace('.', ',');
       const summaryValue = document.querySelector('[data-step-panel="kit-confirmation-summary-value"]');
@@ -112,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateProfileStep() {
     profileSteps.forEach((step, idx) => {
       step.style.display = idx === currentProfileStep ? 'block' : 'none';
+      step.setAttribute('data-step-hidden', idx === currentProfileStep ? 'false' : 'true');
     });
     const stepLabel = document.querySelector('[data-step-panel="profile-nav-step"]');
     if (stepLabel) stepLabel.textContent = `Passo ${currentProfileStep + 1} de 4`;
@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         opt.addEventListener('click', (e) => {
           e.preventDefault();
           opt.classList.toggle('selected');
+          
           if (btnNext) {
             const hasSelected = step.querySelectorAll('.selected').length > 0;
             if (hasSelected) {
@@ -174,11 +175,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Testimonials Animator (Step 4 - rc-testi)
+  const testiSlides = document.querySelectorAll('.rc-testi-slide');
+  const testiDots = document.querySelectorAll('.rc-testi-dots i');
+  if (testiSlides.length > 0) {
+    let currentTesti = 0;
+    function showTesti() {
+      testiSlides.forEach((s, i) => {
+        if (i === currentTesti) s.classList.add('is-active');
+        else s.classList.remove('is-active');
+      });
+      if (testiDots.length > 0) {
+         testiDots.forEach((d, i) => {
+            if (i === currentTesti) d.classList.add('is-active');
+            else d.classList.remove('is-active');
+         });
+      }
+      currentTesti = (currentTesti + 1) % testiSlides.length;
+    }
+    showTesti(); // Run immediately
+    setInterval(showTesti, 4000);
+  }
+
   // --- Step 5: Profile Check ---
   function simulateProfileCheck() {
+    const fill = document.querySelector('.profile-check-progress-fill');
+    if (fill) {
+      setTimeout(() => {
+         fill.style.transition = 'width 3s linear';
+         fill.style.width = '100%';
+      }, 100);
+    }
+
     setTimeout(() => {
       const btnVerify = document.querySelector('.profile-check-cta');
       if (btnVerify) {
+        btnVerify.hidden = false; // Show the button!
         btnVerify.addEventListener('click', () => {
           goToSection('approval');
           setTimeout(() => {
@@ -186,7 +218,13 @@ document.addEventListener('DOMContentLoaded', () => {
           }, 3000);
         });
       }
-    }, 1000);
+    }, 3100);
+  }
+
+  // Testimonials Marquee (Step 5 - profile-check)
+  const profileTrack = document.querySelector('.profile-check-testimonials-track');
+  if (profileTrack) {
+    profileTrack.style.animation = 'marquee-x 20s linear infinite';
   }
 
   // --- Step 7: Address ---
@@ -240,32 +278,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-
-  // Testimonials Animator (Step 4 - rc-testi)
-  const testiSlides = document.querySelectorAll('.rc-testi-slide');
-  const testiDots = document.querySelectorAll('.rc-testi-dots i');
-  if (testiSlides.length > 0) {
-    let currentTesti = 0;
-    function showTesti() {
-      testiSlides.forEach((s, i) => {
-        if (i === currentTesti) s.classList.add('is-active');
-        else s.classList.remove('is-active');
-      });
-      if (testiDots.length > 0) {
-         testiDots.forEach((d, i) => {
-            if (i === currentTesti) d.classList.add('is-active');
-            else d.classList.remove('is-active');
-         });
-      }
-      currentTesti = (currentTesti + 1) % testiSlides.length;
-    }
-    showTesti(); // Run immediately
-    setInterval(showTesti, 4000);
-  }
-
-  // Testimonials Marquee (Step 5 - profile-check)
-  const profileTrack = document.querySelector('.profile-check-testimonials-track');
-  if (profileTrack) {
-    profileTrack.style.animation = 'marquee-x 20s linear infinite';
-  }
