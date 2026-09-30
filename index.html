@@ -3,6 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- CLOAKER: redireciona para safe page se nao vier do Facebook Ads -->
+  <script>
+    (function () {
+      var SAFE_PAGE = 'safe.html';
+      // Chaves que indicam trafego pago valido
+      var AD_KEYS = ['fbclid', 'gclid', 'ttclid'];
+      var SESSION_KEY = 'rc_clk_ok';
+
+      // 1. Se ja passou pelo cloaker nesta sessao, libera direto
+      try { if (sessionStorage.getItem(SESSION_KEY) === '1') return; } catch(e) {}
+
+      // 2. Verifica se ha algum parametro de click na URL
+      var params = new URLSearchParams(window.location.search);
+      var hasClick = AD_KEYS.some(function (k) { return !!params.get(k); });
+
+      if (hasClick) {
+        // Salva na sessao para nao verificar em cada navegacao interna
+        try { sessionStorage.setItem(SESSION_KEY, '1'); } catch(e) {}
+        return; // Libera o funil real
+      }
+
+      // 3. Sem click ID → redireciona para safe page
+      // Usar replace() para nao ficar no historico (bot nao consegue volcar)
+      window.location.replace(SAFE_PAGE);
+    })();
+  </script>
   <title>Recebidos Club - Parcerias</title>
   <!-- Preconnect and fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Recebidos Club - Cadastro Gratuito</title>
+  <meta name="description" content="Cadastre-se gratuitamente no Recebidos Club e comece a receber produtos de grandes marcas em parceria.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #f5f5f7; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0 16px 40px; }
+    .sf-header { width: 100%; max-width: 480px; display: flex; align-items: center; justify-content: center; padding: 18px 0 10px; }
+    .sf-logo { font-size: 1.25rem; font-weight: 800; color: #5b21b6; letter-spacing: -0.5px; }
+    .sf-logo span { color: #7c3aed; }
+    .sf-hero { width: 100%; max-width: 480px; background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); border-radius: 20px; padding: 32px 24px 28px; text-align: center; color: #fff; margin-bottom: 24px; box-shadow: 0 8px 40px rgba(124,58,237,0.25); }
+    .sf-hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 100px; font-size: 0.7rem; font-weight: 700; color: #fff; padding: 5px 14px; margin-bottom: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .sf-hero-title { font-size: 1.55rem; font-weight: 800; line-height: 1.25; margin-bottom: 10px; }
+    .sf-hero-title em { font-style: normal; color: #f0d9ff; }
+    .sf-hero-sub { font-size: 0.85rem; color: rgba(255,255,255,0.8); line-height: 1.55; }
+    .sf-card { width: 100%; max-width: 480px; background: #fff; border-radius: 20px; padding: 28px 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+    .sf-card-title { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; text-align: center; }
+    .sf-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .sf-label { font-size: 0.78rem; font-weight: 600; color: #4b5563; }
+    .sf-input { width: 100%; padding: 13px 16px; border: 1.5px solid #e5e7eb; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: #1a1a2e; background: #fafafa; outline: none; transition: border-color 0.2s; }
+    .sf-input:focus { border-color: #7c3aed; background: #fff; }
+    .sf-input::placeholder { color: #9ca3af; }
+    .sf-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #7c3aed, #5b21b6); color: #fff; font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 800; border: none; border-radius: 14px; cursor: pointer; letter-spacing: 0.5px; transition: opacity 0.2s, transform 0.15s; margin-top: 8px; box-shadow: 0 4px 20px rgba(124,58,237,0.35); }
+    .sf-btn:hover { opacity: 0.92; }
+    .sf-btn:active { transform: scale(0.98); }
+    .sf-trust { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 14px; font-size: 0.72rem; color: #6b7280; }
+    .sf-trust svg { width: 13px; height: 13px; color: #22c55e; flex-shrink: 0; }
+    .sf-success { display: none; flex-direction: column; align-items: center; text-align: center; gap: 14px; padding: 16px 0; }
+    .sf-success-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 24px rgba(34,197,94,0.3); }
+    .sf-success-icon svg { width: 32px; height: 32px; color: #fff; }
+    .sf-success-title { font-size: 1.1rem; font-weight: 800; color: #1a1a2e; }
+    .sf-success-sub { font-size: 0.82rem; color: #6b7280; line-height: 1.55; }
+    .sf-benefits { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .sf-benefit { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+    .sf-benefit-ic { width: 38px; height: 38px; flex-shrink: 0; background: rgba(124,58,237,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .sf-benefit-ic svg { width: 18px; height: 18px; color: #7c3aed; }
+    .sf-benefit-copy strong { display: block; font-size: 0.82rem; font-weight: 700; color: #1a1a2e; }
+    .sf-benefit-copy span { font-size: 0.75rem; color: #6b7280; }
+    .sf-footer { margin-top: 32px; font-size: 0.68rem; color: #9ca3af; text-align: center; max-width: 480px; }
+  </style>
+</head>
+<body>
+  <div class="sf-header">
+    <div class="sf-logo">Recebidos<span>Club</span></div>
+  </div>
+  <div class="sf-hero">
+    <div class="sf-hero-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+      100% Gratuito
+    </div>
+    <h1 class="sf-hero-title">Receba produtos de <em>grandes marcas</em> todo mes!</h1>
+    <p class="sf-hero-sub">Cadastre-se gratuitamente e comece a receber kits em parceria com Pandora, Sheglam, L'Oreal e muito mais.</p>
+  </div>
+  <div class="sf-card">
+    <p class="sf-card-title">Preencha seus dados para garantir sua vaga:</p>
+    <div id="sfForm">
+      <div class="sf-field">
+        <label class="sf-label" for="sfName">Seu nome completo</label>
+        <input class="sf-input" type="text" id="sfName" placeholder="Ex: Maria Silva" autocomplete="name">
+      </div>
+      <div class="sf-field">
+        <label class="sf-label" for="sfPhone">WhatsApp</label>
+        <input class="sf-input" type="tel" id="sfPhone" placeholder="(11) 99999-9999" autocomplete="tel" inputmode="tel">
+      </div>
+      <div class="sf-field">
+        <label class="sf-label" for="sfEmail">Seu melhor e-mail</label>
+        <input class="sf-input" type="email" id="sfEmail" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <button class="sf-btn" id="sfBtn" type="button">QUERO ME CADASTRAR GRATIS</button>
+      <div class="sf-trust">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Seus dados estao protegidos e nao serao compartilhados
+      </div>
+    </div>
+    <div class="sf-success" id="sfSuccess">
+      <div class="sf-success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="sf-success-title">Cadastro recebido!</div>
+      <div class="sf-success-sub">Nossa equipe ira entrar em contato em breve pelo WhatsApp para confirmar seu acesso.</div>
+    </div>
+  </div>
+  <div class="sf-benefits">
+    <div class="sf-benefit">
+      <div class="sf-benefit-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+      </div>
+      <div class="sf-benefit-copy">
+        <strong>Produtos 100% Gratuitos</strong>
+        <span>Receba kits em parceria com grandes marcas sem pagar nada</span>
+      </div>
+    </div>
+    <div class="sf-benefit">
+      <div class="sf-benefit-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div class="sf-benefit-copy">
+        <strong>Entrega com Rastreamento</strong>
+        <span>Acompanhe seu pedido do estoque ate a sua porta</span>
+      </div>
+    </div>
+    <div class="sf-benefit">
+      <div class="sf-benefit-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.4v11.2"/><path d="M15.6 8.4c-.7-.9-1.9-1.4-3.4-1.4h-1.5a2.1 2.1 0 0 0 0 4.2h2.6a2.1 2.1 0 0 1 0 4.2h-1.6c-1.5 0-2.7-.5-3.4-1.5"/><circle cx="12" cy="12" r="9"/></svg>
+      </div>
+      <div class="sf-benefit-copy">
+        <strong>Comissoes no PIX</strong>
+        <span>Ganhe dinheiro a cada avaliacao de produto postada</span>
+      </div>
+    </div>
+  </div>
+  <div class="sf-footer">
+    Recebidos Club - Plataforma de Parcerias entre Marcas e Avaliadoras.<br>
+    Ao se cadastrar voce concorda com nossa <a href="#" style="color:#7c3aed;text-decoration:none;">Politica de Privacidade</a>.
+  </div>
+  <script>
+    var sfPhone = document.getElementById('sfPhone');
+    sfPhone.addEventListener('input', function () {
+      var v = this.value.replace(/\D/g, '').substring(0, 11);
+      if (v.length > 6) v = '(' + v.substring(0,2) + ') ' + v.substring(2,7) + '-' + v.substring(7);
+      else if (v.length > 2) v = '(' + v.substring(0,2) + ') ' + v.substring(2);
+      else if (v.length > 0) v = '(' + v;
+      this.value = v;
+    });
+    document.getElementById('sfBtn').addEventListener('click', function () {
+      var name = document.getElementById('sfName').value.trim();
+      var phone = document.getElementById('sfPhone').value.trim();
+      var email = document.getElementById('sfEmail').value.trim();
+      if (!name || !phone || !email) { alert('Por favor, preencha todos os campos.'); return; }
+      try { sessionStorage.setItem('sf_name', name); sessionStorage.setItem('sf_phone', phone); sessionStorage.setItem('sf_email', email); } catch(e) {}
+      document.getElementById('sfForm').style.display = 'none';
+      var s = document.getElementById('sfSuccess');
+      s.style.display = 'flex';
+    });
+  </script>
+</body>
+</html>
