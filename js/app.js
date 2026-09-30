@@ -697,6 +697,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Mostra o body multi-step
       msBody.removeAttribute('aria-hidden');
+      msBody.classList.add('is-open');
+      msBody.style.display = 'block';
     });
   }
 
@@ -708,7 +710,9 @@ document.addEventListener('DOMContentLoaded', () => {
       opt.classList.add('selected');
       if (msStep2) {
          msStep2.removeAttribute('aria-hidden');
-         msStep2.scrollIntoView({behavior: 'smooth', block: 'start'});
+         msStep2.classList.add('is-open');
+         msStep2.style.display = 'block';
+         setTimeout(() => msStep2.scrollIntoView({behavior: 'smooth', block: 'start'}), 50);
       }
     });
   });
@@ -721,7 +725,9 @@ document.addEventListener('DOMContentLoaded', () => {
           opt.classList.add('selected');
           if (msStep3) {
              msStep3.removeAttribute('aria-hidden');
-             msStep3.scrollIntoView({behavior: 'smooth', block: 'start'});
+             msStep3.classList.add('is-open');
+             msStep3.style.display = 'block';
+             setTimeout(() => msStep3.scrollIntoView({behavior: 'smooth', block: 'start'}), 50);
           }
       });
   });
