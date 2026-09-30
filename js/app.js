@@ -115,53 +115,55 @@ document.addEventListener('DOMContentLoaded', () => {
      }
 
      function createAudioMsg() {
+         const durationSec = 19; // from RC_CONFIG.approvalChat.audioDurationSeconds
+         const audioSrc = 'img/audio/act.mp3';
+         
          const msg = createMsg(`
-           <div class="approval-chat-bubble approval-chat-audio" id="fakeAudioPlayer">
+           <div class="approval-chat-bubble approval-chat-audio" id="rcAudioPlayer">
                <span class="approval-chat-audio-ic approval-chat-audio-ic--play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
                <span class="approval-chat-audio-ic approval-chat-audio-ic--pause"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></span>
                <div class="approval-chat-audio-bar">
-                  <div class="approval-chat-audio-fill" id="fakeAudioFill" style="width: 0%;"></div>
+                  <div class="approval-chat-audio-fill" id="rcAudioFill" style="width: 0%;"></div>
                </div>
-               <span class="approval-chat-audio-time" id="fakeAudioTime">0:00</span>
-               <span class="approval-chat-audio-time" style="left: auto; right: 40px;">01:38</span>
+               <span class="approval-chat-audio-time" id="rcAudioCurrent">0:00</span>
+               <span class="approval-chat-audio-time" style="left: auto; right: 40px;" id="rcAudioTotal">0:${String(durationSec).padStart(2,'0')}</span>
            </div>
          `);
          
-         // Initialize Fake Audio logic
          setTimeout(() => {
-             const player = document.getElementById('fakeAudioPlayer');
-             const fill = document.getElementById('fakeAudioFill');
-             const timeLabel = document.getElementById('fakeAudioTime');
-             if(!player) return;
-          
-             let isPlaying = false;
-             let progress = 0; 
-             let durationSec = 98; 
-             let timer;
-          
+             const player = document.getElementById('rcAudioPlayer');
+             const fill = document.getElementById('rcAudioFill');
+             const currentLabel = document.getElementById('rcAudioCurrent');
+             if (!player) return;
+             
+             const audio = new Audio(audioSrc);
+             audio.preload = 'auto';
+             
+             function fmtTime(s) {
+                 s = Math.floor(s);
+                 return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+             }
+             
+             function updateBar() {
+                 const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+                 fill.style.width = pct + '%';
+                 currentLabel.textContent = fmtTime(audio.currentTime);
+                 const totalEl = document.getElementById('rcAudioTotal');
+                 if (totalEl && audio.duration) totalEl.textContent = fmtTime(audio.duration);
+             }
+             
+             audio.addEventListener('timeupdate', updateBar);
+             audio.addEventListener('ended', () => {
+                 player.classList.remove('is-playing');
+                 fill.style.width = '100%';
+             });
+             
              player.addEventListener('click', () => {
-                 if (isPlaying) {
-                     isPlaying = false;
-                     player.classList.remove('is-playing');
-                     clearInterval(timer);
+                 if (audio.paused) {
+                     audio.play().then(() => player.classList.add('is-playing')).catch(() => {});
                  } else {
-                     isPlaying = true;
-                     player.classList.add('is-playing');
-                     timer = setInterval(() => {
-                         progress += (100 / (durationSec * 10)); // updates every 100ms
-                         if (progress >= 100) {
-                             progress = 100;
-                             isPlaying = false;
-                             player.classList.remove('is-playing');
-                             clearInterval(timer);
-                         }
-                         fill.style.width = progress + '%';
-                         
-                         let currentSec = Math.floor((progress / 100) * durationSec);
-                         let m = Math.floor(currentSec / 60);
-                         let s = currentSec % 60;
-                         timeLabel.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-                     }, 100);
+                     audio.pause();
+                     player.classList.remove('is-playing');
                  }
              });
          }, 100);
