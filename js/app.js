@@ -32,11 +32,20 @@ document.addEventListener('DOMContentLoaded', () => {
      const existingCta = messagesContainer.querySelector('.approval-chat-cta');
      if(existingCta) existingCta.remove();
 
-     function createTypingMsg() {
+     function createMsg(htmlContent, extraClasses='') {
          const msg = document.createElement('div');
-         msg.className = 'approval-chat-msg';
+         msg.className = 'approval-chat-msg ' + extraClasses;
          msg.innerHTML = `
            <img class="approval-chat-avatar" src="img/hero.webp" alt="">
+           ${htmlContent}
+         `;
+         messagesContainer.appendChild(msg);
+         msg.scrollIntoView({ behavior: 'smooth' });
+         return msg;
+     }
+
+     function createTypingMsg() {
+         return createMsg(`
            <div class="approval-chat-bubble">
               <div class="approval-chat-typing">
                  <div class="approval-chat-typing-dot"></div>
@@ -44,23 +53,120 @@ document.addEventListener('DOMContentLoaded', () => {
                  <div class="approval-chat-typing-dot"></div>
               </div>
            </div>
-         `;
-         messagesContainer.appendChild(msg);
-         msg.scrollIntoView({ behavior: 'smooth' });
-         return msg;
+         `);
      }
 
      function createTextMsg(text) {
-         const msg = document.createElement('div');
-         msg.className = 'approval-chat-msg';
-         msg.innerHTML = `
-           <img class="approval-chat-avatar" src="img/hero.webp" alt="">
+         return createMsg(`
            <div class="approval-chat-bubble">
               ${text}
            </div>
-         `;
-         messagesContainer.appendChild(msg);
-         msg.scrollIntoView({ behavior: 'smooth' });
+         `);
+     }
+
+     function createMediaMsg() {
+         let imgTags = '';
+         if (typeof selectedKits !== 'undefined' && selectedKits.size > 0) {
+             const kitsArray = Array.from(selectedKits);
+             kitsArray.slice(0, 3).forEach(idx => {
+                imgTags += `<img src="img/kits/somentekits/${idx+1}.webp" alt="Kit">`;
+             });
+         } else {
+             imgTags = `<img src="img/kits/somentekits/1.webp" alt="Kit"><img src="img/kits/somentekits/2.webp" alt="Kit">`;
+         }
+         return createMsg(`
+           <div class="approval-chat-bubble approval-chat-media">
+              <div class="approval-chat-media-clip">
+                  <div class="approval-chat-media-rail">
+                      ${imgTags}
+                  </div>
+              </div>
+           </div>
+         `);
+     }
+
+     function createTotalMsg() {
+         return createMsg(`
+           <div class="approval-chat-bubble approval-chat-total">
+              <div class="approval-chat-total-ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg>
+              </div>
+              <div class="approval-chat-total-body">
+                 <p class="approval-chat-total-title">Valor Total dos Produtos Escolhidos: <span class="approval-chat-total-value">R$1179,50</span></p>
+                 <p class="approval-chat-total-text">São mais de R$1179,50 em produtos, totalmente de GRAÇA em parceria, incrível né? 🤩💜</p>
+              </div>
+           </div>
+         `);
+     }
+
+     function createGiftMsg() {
+         return createMsg(`
+           <div class="approval-chat-bubble approval-chat-gift">
+              <img src="img/kits/bp.webp" onerror="this.src='https://reclub.shop/rHkIclJHLifFDH/img/kits/bp.webp'" class="approval-chat-media-gift" alt="Brinde">
+              <div class="approval-chat-gift-body">
+                 <div class="approval-chat-gift-tarja">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> BRINDE EXCLUSIVO
+                 </div>
+                 <p class="approval-chat-gift-title"><strong>Um Brinde Grátis <span class="approval-chat-gift-accent">EXCLUSIVO</span></strong> em parceria com a Pandora: Esse bracelete é maravilhoso, né? 💜✨</p>
+                 <p class="approval-chat-gift-text">Tudo isso no seu Primeiro Envio! Parabéns, viu? Você garantiu uma das últimas vagas disponíveis!</p>
+              </div>
+           </div>
+         `);
+     }
+
+     function createAudioMsg() {
+         const msg = createMsg(`
+           <div class="approval-chat-bubble approval-chat-audio" id="fakeAudioPlayer">
+               <span class="approval-chat-audio-ic approval-chat-audio-ic--play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
+               <span class="approval-chat-audio-ic approval-chat-audio-ic--pause"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></span>
+               <div class="approval-chat-audio-bar">
+                  <div class="approval-chat-audio-fill" id="fakeAudioFill" style="width: 0%;"></div>
+               </div>
+               <span class="approval-chat-audio-time" id="fakeAudioTime">0:00</span>
+               <span class="approval-chat-audio-time" style="left: auto; right: 40px;">01:38</span>
+           </div>
+         `);
+         
+         // Initialize Fake Audio logic
+         setTimeout(() => {
+             const player = document.getElementById('fakeAudioPlayer');
+             const fill = document.getElementById('fakeAudioFill');
+             const timeLabel = document.getElementById('fakeAudioTime');
+             if(!player) return;
+          
+             let isPlaying = false;
+             let progress = 0; 
+             let durationSec = 98; 
+             let timer;
+          
+             player.addEventListener('click', () => {
+                 if (isPlaying) {
+                     isPlaying = false;
+                     player.classList.remove('is-playing');
+                     clearInterval(timer);
+                 } else {
+                     isPlaying = true;
+                     player.classList.add('is-playing');
+                     timer = setInterval(() => {
+                         progress += (100 / (durationSec * 10)); // updates every 100ms
+                         if (progress >= 100) {
+                             progress = 100;
+                             isPlaying = false;
+                             player.classList.remove('is-playing');
+                             clearInterval(timer);
+                         }
+                         fill.style.width = progress + '%';
+                         
+                         let currentSec = Math.floor((progress / 100) * durationSec);
+                         let m = Math.floor(currentSec / 60);
+                         let s = currentSec % 60;
+                         timeLabel.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+                     }, 100);
+                 }
+             });
+         }, 100);
+         
+         return msg;
      }
 
      function createCta() {
@@ -86,19 +192,22 @@ document.addEventListener('DOMContentLoaded', () => {
          const typing1 = createTypingMsg();
          await delay(2000);
          typing1.remove();
-         createTextMsg(`Oi ${firstName}! Tudo bem? Passando para avisar que acabamos de aprovar o seu perfil. 🎉`);
+         createMediaMsg();
+         createTotalMsg();
          
          await delay(1500);
          const typing2 = createTypingMsg();
          await delay(2500);
          typing2.remove();
-         createTextMsg(`Como você preencheu tudo certinho, sua vaga de Avaliadora já foi garantida e seus kits já estão reservados.`);
+         createTextMsg(`Ahh! 👀 Não é só isso! As novas avaliadoras aprovadas esse ano recebem um brinde EXCLUSIVO:`);
+         createGiftMsg();
          
          await delay(1500);
          const typing3 = createTypingMsg();
          await delay(2000);
          typing3.remove();
-         createTextMsg(`Agora só precisamos que você preencha os dados do seu endereço para enviarmos o seu acesso ao app e os primeiros produtos.`);
+         createTextMsg(`🎙️ Antes da gente finalizar seu Perfil, vou te mandar um áudio explicando como funciona nosso clube:`);
+         createAudioMsg();
          
          await delay(1000);
          createCta();
