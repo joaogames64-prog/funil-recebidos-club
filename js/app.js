@@ -207,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const texts = ["Verificando dados pessoais...", "Analisando perfil...", "Verificando Instagram...", "Calculando limites de comissão..."];
     
     // Video injection
+    const videoSlot = document.querySelector('.profile-check-video-slot');
     const video = document.querySelector('.profile-check-video');
     if (video) {
       const source = video.querySelector('source');
@@ -217,11 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Show horizontal testimonials if hidden
     const horizontalTestis = document.querySelector('.profile-check-testimonials');
-    if (horizontalTestis) {
-        horizontalTestis.removeAttribute('hidden');
-    }
 
     if (fill) {
       setTimeout(() => {
@@ -230,20 +227,39 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 100);
     }
 
+    let textInterval;
     if (desc) {
       let textIdx = 0;
-      const textInterval = setInterval(() => {
+      textInterval = setInterval(() => {
         textIdx++;
         if (textIdx < texts.length) {
           desc.textContent = texts[textIdx];
         } else {
           clearInterval(textInterval);
-          desc.textContent = "Perfil Aprovado!";
         }
       }, 800);
     }
 
     setTimeout(() => {
+      // Hide video
+      if (videoSlot) videoSlot.style.display = 'none';
+      if (video) video.pause();
+      
+      // Show carousel
+      if (horizontalTestis) {
+          horizontalTestis.removeAttribute('hidden');
+      }
+      
+      // Update Title and Desc
+      const title = document.querySelector('.profile-check-title');
+      if (title) {
+          title.innerHTML = '<span>LÍVIA</span> verificou seu Perfil! <span class="pc-accent">ACESSE O CHAT ABAIXO</span>';
+      }
+      if (desc) {
+          desc.textContent = "Verificação Finalizada!";
+      }
+
+      // Show Button
       const btnVerify = document.querySelector('.profile-check-cta');
       if (btnVerify) {
         btnVerify.hidden = false;
