@@ -931,7 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
                const response = await fetch(API_URL, {
                    method: 'POST',
                    headers: { 'Content-Type': 'application/json' },
-                   body: JSON.stringify({ customer, planKey, shippingKey, hasBump })
+                   body: JSON.stringify({ customer, planKey, shippingKey, hasBump, tracking: (window.getTrackingParams ? window.getTrackingParams() : {}) })
                });
                const data = await response.json();
                

@@ -10,6 +10,54 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Dancing+Script:wght@700&family=Bebas+Neue&family=Playfair+Display:wght@700&family=Montserrat:wght@800&family=Nunito:wght@800&family=Raleway:wght@800&family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/landing.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Lowtrack Pixel -->
+  <script>
+    window.pixelId = "lt_px_49b0e9e5ca0c";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://lowtrack.com.br/pixel.js");
+    document.head.appendChild(a);
+  </script>
+  <!-- UTM Persist: salva e re-injeta parâmetros de rastreamento em toda navegação -->
+  <script>
+    (function () {
+      var TRACK_KEYS = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','src','sck','subid','fbclid','gclid','ttclid'];
+      var params = new URLSearchParams(window.location.search);
+      // Salva qualquer parâmetro novo da URL atual
+      TRACK_KEYS.forEach(function (k) {
+        var v = params.get(k);
+        if (v) {
+          sessionStorage.setItem(k, v);
+          try { localStorage.setItem(k, v); } catch(e){}
+        }
+      });
+      // Expõe helper global para ler os parâmetros salvos
+      window.getTrackingParams = function () {
+        var out = {};
+        TRACK_KEYS.forEach(function (k) {
+          var v = sessionStorage.getItem(k) || (function(){ try{ return localStorage.getItem(k); }catch(e){ return null; } })();
+          if (v) out[k] = v;
+        });
+        return out;
+      };
+      // Injeta os parâmetros em qualquer link externo que saia desta página
+      document.addEventListener('click', function (e) {
+        var link = e.target.closest('a[href]');
+        if (!link) return;
+        try {
+          var url = new URL(link.href, window.location.origin);
+          if (url.origin !== window.location.origin) {
+            var stored = window.getTrackingParams();
+            Object.keys(stored).forEach(function (k) {
+              if (!url.searchParams.has(k)) url.searchParams.set(k, stored[k]);
+            });
+            link.href = url.toString();
+          }
+        } catch (err) {}
+      });
+    })();
+  </script>
 </head>
 <body class="rc-theme-default">
   <div class="rc-app" id="rcApp">
