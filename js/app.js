@@ -892,16 +892,63 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize total if already pre-selected
   updateTotals();
 
-  // --- Step 9: Checkout ---
+  // --- Step 9: Checkout (HuraPay Backend Integration) ---
   const btnCheckout = document.querySelector('.rc-finalize-cta');
   if (btnCheckout) {
-    btnCheckout.addEventListener('click', () => {
+    btnCheckout.addEventListener('click', async () => {
        if (!btnCheckout.classList.contains('btn-disabled')) {
            const qrTotal = document.getElementById('checkoutQrTotal');
            if (qrTotal && window.checkoutTotalValue) {
                qrTotal.textContent = 'R$' + window.checkoutTotalValue.toLocaleString('pt-BR', {minimumFractionDigits: 2});
            }
-           goToSection('checkout');
+           
+           // Extract selections
+           const selectedPlan = document.querySelector('.rc-plan-option.selected');
+           const selectedShip = document.querySelector('.rc-ship-option.selected');
+           const bumpCard = document.querySelector('.rc-bump-card');
+           
+           const planKey = selectedPlan ? 'plan_' + selectedPlan.dataset.rcTrackValue : null; 
+           const shippingKey = selectedShip ? 'shipping_' + selectedShip.dataset.ship : null; 
+           const hasBump = bumpCard && bumpCard.getAttribute('aria-pressed') === 'true';
+
+           const customer = {
+              name: document.getElementById('profileName')?.value.trim() || 'Cliente',
+              email: document.getElementById('addressEmail')?.value.trim() || 'cliente@recebidos.com',
+              phone: document.getElementById('addressWhatsapp')?.value.trim() || '11999999999'
+           };
+
+           // Loading UI
+           const oldText = btnCheckout.textContent;
+           btnCheckout.textContent = 'GERANDO PIX...';
+           btnCheckout.disabled = true;
+
+           try {
+               const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                 ? 'http://localhost:3000/api/checkout' 
+                 : '/api/checkout'; // Fallback for production if hosted together
+                 
+               // For testing, let's force localhost since we are running server.js locally on 3001
+               const response = await fetch('http://localhost:3001/api/checkout', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ customer, planKey, shippingKey, hasBump })
+               });
+               const data = await response.json();
+               
+               if (data.brCodeBase64 && data.brCode) {
+                   document.getElementById('checkoutQrImg').src = data.brCodeBase64;
+                   document.getElementById('checkoutKeyInput').value = data.brCode;
+                   goToSection('checkout');
+               } else {
+                   alert('Erro ao gerar PIX: ' + (data.error || 'Verifique se os dados estão preenchidos.'));
+               }
+           } catch (err) {
+               console.error(err);
+               alert('Erro de conexão com o servidor. Tente novamente.');
+           } finally {
+               btnCheckout.textContent = oldText;
+               btnCheckout.disabled = false;
+           }
        }
     });
   }
