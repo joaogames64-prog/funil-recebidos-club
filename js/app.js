@@ -206,6 +206,24 @@ document.addEventListener('DOMContentLoaded', () => {
      
      (async () => {
          await delay(1000);
+         const typing0 = createTypingMsg();
+         await delay(2000);
+         typing0.remove();
+         createTextMsg(`Oii ${firstName}! Tudo bem? Parabéns por ter chegado até aqui! 🎉`);
+
+         await delay(1500);
+         const typing0b = createTypingMsg();
+         await delay(2000);
+         typing0b.remove();
+         createTextMsg(`Eu sou a Lívia e vou finalizar o seu cadastro para liberar os seus produtos!`);
+
+         await delay(1500);
+         const typing0c = createTypingMsg();
+         await delay(1500);
+         typing0c.remove();
+         createTextMsg(`Estou vendo aqui que você selecionou esses kits maravilhosos:`);
+
+         await delay(1500);
          const typing1 = createTypingMsg();
          await delay(2000);
          typing1.remove();
@@ -245,6 +263,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const kitCards = document.querySelectorAll('.kit-card:not(.out-of-stock)');
   const kitCounter = document.querySelector('[data-step-panel="kit-selection-counter"]');
   const btnKitsConfirm = document.querySelector('.kit-selection-confirm');
+
+  kitCards.forEach((card, idx) => {
+    if (card.classList.contains('selected')) {
+      selectedKits.add(idx);
+    }
+  });
 
   function updateKits() {
     kitCards.forEach((card, idx) => {
@@ -419,27 +443,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const desc = document.querySelector('.profile-check-progress-desc');
     const texts = ["Verificando dados pessoais...", "Analisando perfil...", "Verificando Instagram...", "Calculando limites de comissão..."];
     
-    // Video injection
     const videoSlot = document.querySelector('.profile-check-video-slot');
     const video = document.querySelector('.profile-check-video');
-    if (video) {
-      const source = video.querySelector('source');
-      if (source && source.dataset.src) {
-        source.src = source.dataset.src;
-        video.load();
-        video.play().catch(e => console.log('Video autoplay blocked:', e));
-      }
-    }
-
     const horizontalTestis = document.querySelector('.profile-check-testimonials');
-
-    if (fill) {
-      setTimeout(() => {
-         fill.style.transition = 'width 3.5s linear';
-         fill.style.width = '100%';
-      }, 100);
-    }
-
+    
     let textInterval;
     if (desc) {
       let textIdx = 0;
@@ -447,13 +454,20 @@ document.addEventListener('DOMContentLoaded', () => {
         textIdx++;
         if (textIdx < texts.length) {
           desc.textContent = texts[textIdx];
-        } else {
-          clearInterval(textInterval);
         }
-      }, 800);
+      }, 1000); // Slower text update to match longer video
     }
 
-    setTimeout(() => {
+    let isFinished = false;
+    function finishCheck() {
+      if (isFinished) return;
+      isFinished = true;
+      if (textInterval) clearInterval(textInterval);
+      if (fill) {
+          fill.style.transition = 'width 0.3s ease';
+          fill.style.width = '100%';
+      }
+
       // Hide video
       if (videoSlot) videoSlot.style.display = 'none';
       if (video) video.pause();
@@ -490,7 +504,39 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       }
-    }, 3600);
+    }
+
+    if (video) {
+      const source = video.querySelector('source');
+      if (source && source.dataset.src) {
+        source.src = source.dataset.src;
+        video.load();
+        
+        video.addEventListener('timeupdate', () => {
+            if (video.duration && fill) {
+                fill.style.transition = 'none';
+                fill.style.width = ((video.currentTime / video.duration) * 100) + '%';
+            }
+        });
+        
+        video.play().then(() => {
+            video.addEventListener('ended', finishCheck);
+            // Backup fallback just in case video hangs
+            setTimeout(finishCheck, 12000); 
+        }).catch(e => {
+            console.log('Video autoplay blocked:', e);
+            if (fill) {
+                fill.style.transition = 'width 5s linear';
+                fill.style.width = '100%';
+            }
+            setTimeout(finishCheck, 5000);
+        });
+      } else {
+        setTimeout(finishCheck, 3500);
+      }
+    } else {
+        setTimeout(finishCheck, 3500);
+    }
   }
 
   // Testimonials Marquee (Step 5 - profile-check)
