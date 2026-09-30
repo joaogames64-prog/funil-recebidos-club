@@ -101,7 +101,68 @@ app.post('/api/checkout', async (req, res) => {
       }
     });
 
-    res.json(response.data);
+    const hurapayData = response.data;
+
+    // --- LOWTRACK INTEGRATION ---
+    // Fire and forget a webhook to LowTrack to register tracking data for this transaction
+    const LOWTRACK_TOKEN = process.env.LOWTRACK_API_TOKEN;
+    if (LOWTRACK_TOKEN) {
+      try {
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+        const userAgent = req.headers['user-agent'] || '';
+        
+        // Build the products array as required by LowTrack (first item is main, rest are bumps)
+        const lowtrackProducts = [];
+        lowtrackProducts.push({ id: CATALOG[planKey].id, name: `Plano ${planKey.split('_')[1]}` });
+        if (hasBump) {
+          lowtrackProducts.push({ id: CATALOG.bump_kits.id, name: "Kits Surpresa (Bump)" });
+        }
+        
+        const lowtrackPayload = {
+          event: "sale.pending",
+          transaction_id: hurapayData.id,
+          amount: totalAmount / 100, // HuraPay is in cents, LowTrack expects decimals
+          currency: "BRL",
+          payment_method: "pix",
+          product: lowtrackProducts[0],
+          products: lowtrackProducts,
+          customer: {
+            name: customer.name || "Cliente Recebidos",
+            email: customer.email,
+            phone: cleanedPhone,
+            document: validCpf
+          },
+          tracking: {
+            utm_source: utms?.utm_source || "",
+            utm_medium: utms?.utm_medium || "",
+            utm_campaign: utms?.utm_campaign || "",
+            utm_term: utms?.utm_term || "",
+            utm_content: utms?.utm_content || "",
+            src: utms?.src || "",
+            sck: utms?.sck || ""
+          },
+          user_ip: clientIp.split(',')[0].trim(),
+          user_agent: userAgent,
+          metadata: {
+            platform: "hurapay"
+          }
+        };
+
+        axios.post('https://lowtrack.com.br/api/webhook', lowtrackPayload, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${LOWTRACK_TOKEN}`
+          }
+        }).catch(err => {
+          console.error("Erro ao enviar para LowTrack:", err.response?.data || err.message);
+        });
+
+      } catch (ltErr) {
+        console.error("LowTrack Logic Error:", ltErr.message);
+      }
+    }
+
+    res.json(hurapayData);
 
   } catch (error) {
     console.error("HuraPay API Error:", error.response?.data || error.message);
