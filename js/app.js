@@ -62,6 +62,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnKitsConfirm) {
     btnKitsConfirm.addEventListener('click', () => {
+      // Build carousel
+      const rail = document.querySelector('[data-step-panel="kit-confirmation-carousel-rail-top"]');
+      if (rail) {
+        rail.innerHTML = '';
+        Array.from(selectedKits).forEach(idx => {
+          const kitCard = kitCards[idx];
+          const imgPath = kitCard.querySelector('img').src;
+          const item = document.createElement('div');
+          item.className = 'kit-confirmation-carousel-item';
+          const img = document.createElement('img');
+          img.src = imgPath;
+          item.appendChild(img);
+          rail.appendChild(item);
+        });
+      }
+
+      // Update total price (R$235.90 per kit as seen in original)
+      const totalPrice = (selectedKits.size * 235.90).toFixed(2).replace('.', ',');
+      const summaryValue = document.querySelector('[data-step-panel="kit-confirmation-summary-value"]');
+      if (summaryValue) {
+        summaryValue.innerHTML = `<strong>R$${totalPrice}</strong> em Produtos, <strong>totalmente de Graça</strong>`;
+      }
+      const galleryTotal = document.querySelector('[data-step-panel="kit-confirmation-gallery-total"]');
+      if (galleryTotal) {
+        galleryTotal.textContent = `Valor total dos Produtos Escolhidos: R$${totalPrice}`;
+      }
+
       goToSection('kit-confirmation');
     });
   }
