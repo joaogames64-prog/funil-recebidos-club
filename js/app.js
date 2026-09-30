@@ -231,46 +231,47 @@ document.addEventListener('DOMContentLoaded', () => {
     (async () => {
       let t;
 
-      await delay(800);
-      t = createTypingMsg(); await delay(1800); t.remove();
+      await delay(1500);
+      t = createTypingMsg(); await delay(2500); t.remove();
       createTextMsg(`Olê ${firstName}! Sou a Lívia, e estava acompanhando seu Cadastro 😊`);
 
-      await delay(1200);
-      t = createTypingMsg(); await delay(2000); t.remove();
+      await delay(1500);
+      t = createTypingMsg(); await delay(2800); t.remove();
       createTextMsg(`Verifiquei todos seus dados e... VOCÊ TÁ APROVADAAA! 🎊😁🎊`);
 
-      await delay(1200);
-      t = createTypingMsg(); await delay(3500); t.remove();
+      await delay(2000);
+      t = createTypingMsg(); await delay(5500); t.remove();
       createTextMsg(`Seja MUITO bem-vinda a Recebidos Club! Veja seus Benefícios sendo Avaliadora:\n\nVocê recebe kits em parceria todos os meses, em troca de gravar vídeos de avaliação quando os produtos chegarem 💜\n\nVocê recebe comissões no PIX por cada recebido avaliado, e já ganhou um saldo de R$360 só por ter sido aprovada! 💵\n\nE Muitas outras Oportunidades que você vai acompanhar dentro do APP!`);
 
-      await delay(1500);
-      t = createTypingMsg(); await delay(1500); t.remove();
+      await delay(2500);
+      t = createTypingMsg(); await delay(2500); t.remove();
       createTextMsg(`👇 Olha, isso é tudo que você vai receber no seu primeiro envio:`);
 
-      await delay(800);
+      await delay(1200);
       createMediaMsg();
-      await delay(400);
+      await delay(800);
       createTotalMsg();
 
-      await delay(1500);
-      t = createTypingMsg(); await delay(1800); t.remove();
+      await delay(3000);
+      t = createTypingMsg(); await delay(3500); t.remove();
       createTextMsg(`Ahh! 👀 Não é só isso! As novas avaliadoras aprovadas esse ano recebem um brinde EXCLUSIVO:`);
 
-      await delay(800);
+      await delay(1200);
       createGiftMsg();
 
-      await delay(1500);
-      t = createTypingMsg(); await delay(1800); t.remove();
+      await delay(3500);
+      t = createTypingMsg(); await delay(3000); t.remove();
       createTextMsg(`Antes da gente finalizar seu Perfil, vou te mandar um áudio explicando como funciona nosso clube:`);
 
-      await delay(800);
+      await delay(2000);
+      t = createTypingMsg(); await delay(2000); t.remove();
       createAudioMsg();
 
-      await delay(1500);
-      t = createTypingMsg(); await delay(2000); t.remove();
+      await delay(3500);
+      t = createTypingMsg(); await delay(2500); t.remove();
       createTextMsg(`Tudo certinho? Podemos finalizar a criação do seu Perfil e continuar? 😊`);
 
-      await delay(800);
+      await delay(1200);
       // Button 1
       const btn1Wrap = document.createElement('div');
       btn1Wrap.className = 'approval-chat-bubble--action';
@@ -282,18 +283,18 @@ document.addEventListener('DOMContentLoaded', () => {
         btn1.classList.add('approval-chat-cta--used');
         btn1.disabled = true;
 
-        await delay(800);
-        t = createTypingMsg(); await delay(1800); t.remove();
+        await delay(1200);
+        t = createTypingMsg(); await delay(2500); t.remove();
         createTextMsg(`Perfeito! Confirma os termos de Segurança para continuarmos:`);
 
-        await delay(800);
+        await delay(1000);
         createTermsMsg();
 
-        await delay(1500);
-        t = createTypingMsg(); await delay(1800); t.remove();
+        await delay(2500);
+        t = createTypingMsg(); await delay(2000); t.remove();
         createTextMsg(`Se estiver tudo certinho, Confirma pra mim 💜👇`);
 
-        await delay(800);
+        await delay(1200);
         // Button 2
         const btn2Wrap = document.createElement('div');
         btn2Wrap.className = 'approval-chat-bubble--action';
