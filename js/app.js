@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (id === 'approval') {
         startApprovalChat();
+    } else if (id === 'address') {
+        // Fill lead's first name in the address title
+        const nameSpan = document.querySelector('[data-fill-name]');
+        if (nameSpan) {
+            const profileNameInput = document.getElementById('profileName');
+            const fullName = profileNameInput ? profileNameInput.value.trim() : '';
+            const firstName = fullName.split(' ')[0] || '';
+            nameSpan.textContent = firstName || 'NOME';
+        }
     } else if (id === 'shipping') {
         const orderKits = document.querySelector('[data-step-panel="shipping-order-kits"]');
         if (orderKits) {
