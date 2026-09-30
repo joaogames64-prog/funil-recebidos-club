@@ -951,4 +951,48 @@ document.addEventListener('DOMContentLoaded', () => {
        }
     });
   }
+  
+  // --- Copy PIX Code Logic ---
+  const copyBtn = document.getElementById('checkoutCopyBtn');
+  if (copyBtn) {
+    const originalHTML = copyBtn.innerHTML;
+    copyBtn.addEventListener('click', () => {
+      const pixInput = document.getElementById('checkoutKeyInput');
+      if (pixInput && pixInput.value) {
+        // Fallback for older browsers
+        const fallbackCopy = () => {
+          pixInput.select();
+          pixInput.setSelectionRange(0, 99999); // For mobile devices
+          try {
+            document.execCommand('copy');
+            showSuccess();
+          } catch (err) {
+            console.error('Failed to copy text', err);
+          }
+        };
+
+        const showSuccess = () => {
+          copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;margin-right:6px;"><polyline points="20 6 9 17 4 12"></polyline></svg> Copiado!';
+          copyBtn.style.backgroundColor = '#4CAF50';
+          copyBtn.style.color = '#fff';
+          copyBtn.style.borderColor = '#4CAF50';
+          setTimeout(() => {
+            copyBtn.innerHTML = originalHTML;
+            copyBtn.style.backgroundColor = '';
+            copyBtn.style.color = '';
+            copyBtn.style.borderColor = '';
+          }, 2000);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(pixInput.value)
+            .then(showSuccess)
+            .catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+      }
+    });
+  }
+
 });
