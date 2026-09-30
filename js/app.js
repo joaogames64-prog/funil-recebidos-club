@@ -665,6 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
     opt.addEventListener('click', () => {
       planOptions.forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
+      updateTotals();
       if (msStep2) {
          msStep2.removeAttribute('aria-hidden');
          msStep2.classList.add('is-open');
@@ -680,6 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
       opt.addEventListener('click', () => {
           shipOptions.forEach(o => o.classList.remove('selected'));
           opt.classList.add('selected');
+          updateTotals();
           if (msStep3) {
              msStep3.removeAttribute('aria-hidden');
              msStep3.classList.add('is-open');
@@ -695,14 +697,70 @@ document.addEventListener('DOMContentLoaded', () => {
     bumpCard.addEventListener('click', () => {
        const isPressed = bumpCard.getAttribute('aria-pressed') === 'true';
        bumpCard.setAttribute('aria-pressed', !isPressed);
+       updateTotals();
     });
   }
+
+  // Calculate and update totals
+  function updateTotals() {
+    const orderLines = document.querySelector('[data-step-panel="shipping-order-lines"]');
+    const orderTotal = document.querySelector('[data-step-panel="shipping-order-total"]');
+    const btnFinalize = document.querySelector('[data-step-action="shipping-finalize"]');
+    
+    if (!orderLines || !orderTotal) return;
+
+    const selectedPlan = document.querySelector('.rc-plan-option.selected');
+    const selectedShip = document.querySelector('.rc-ship-option.selected');
+    const isBumpSelected = bumpCard && bumpCard.getAttribute('aria-pressed') === 'true';
+
+    let html = '';
+    let total = 0;
+
+    if (selectedPlan) {
+       let planNameEl = selectedPlan.querySelector('.rc-plan-option-top strong');
+       let planName = planNameEl ? planNameEl.textContent : 'Plano';
+       let planPrice = parseFloat(selectedPlan.dataset.price || 0);
+       html += `<div class="rc-order-line"><span class="rc-order-line-label">Taxa de Adesão (${planName})</span><i class="rc-order-line-fill" aria-hidden="true"></i><strong class="rc-order-line-value">R$${planPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></div>`;
+       total += planPrice;
+    }
+
+    if (selectedShip) {
+       let shipNameEl = selectedShip.querySelector('.rc-ship-option-head strong');
+       let shipName = shipNameEl ? shipNameEl.textContent.trim() : 'Frete';
+       let shipPrice = parseFloat(selectedShip.dataset.shipTotal || 0);
+       html += `<div class="rc-order-line"><span class="rc-order-line-label">Primeiro Envio (${shipName})</span><i class="rc-order-line-fill" aria-hidden="true"></i><strong class="rc-order-line-value">R$${shipPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></div>`;
+       total += shipPrice;
+    }
+
+    if (isBumpSelected) {
+       html += `<div class="rc-order-line"><span class="rc-order-line-label">Kits Extra Surpresa</span><i class="rc-order-line-fill" aria-hidden="true"></i><strong class="rc-order-line-value">R$9,90</strong></div>`;
+       total += 9.90;
+    }
+
+    orderLines.innerHTML = html;
+    orderTotal.textContent = 'R$' + total.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+
+    if (btnFinalize) {
+       if (selectedPlan && selectedShip) {
+         btnFinalize.classList.remove('btn-disabled');
+         btnFinalize.disabled = false;
+       } else {
+         btnFinalize.classList.add('btn-disabled');
+         btnFinalize.disabled = true;
+       }
+    }
+  }
+
+  // Initialize total if already pre-selected
+  updateTotals();
 
   // --- Step 9: Checkout ---
   const btnCheckout = document.querySelector('.rc-finalize-cta');
   if (btnCheckout) {
     btnCheckout.addEventListener('click', () => {
-       goToSection('checkout');
+       if (!btnCheckout.classList.contains('btn-disabled')) {
+           goToSection('checkout');
+       }
     });
   }
 });
