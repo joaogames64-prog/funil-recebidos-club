@@ -16,6 +16,93 @@ document.addEventListener('DOMContentLoaded', () => {
     
     currentSection = target;
     window.scrollTo(0, 0);
+    
+    if (id === 'approval') {
+        startApprovalChat();
+    }
+  }
+
+  // --- Step 6: Approval Chat ---
+  function startApprovalChat() {
+     const messagesContainer = document.querySelector('.approval-chat-messages');
+     if(!messagesContainer) return;
+
+     const existingMsgs = messagesContainer.querySelectorAll('.approval-chat-msg');
+     existingMsgs.forEach(m => m.remove());
+     const existingCta = messagesContainer.querySelector('.approval-chat-cta');
+     if(existingCta) existingCta.remove();
+
+     function createTypingMsg() {
+         const msg = document.createElement('div');
+         msg.className = 'approval-chat-msg';
+         msg.innerHTML = `
+           <img class="approval-chat-avatar" src="img/hero.webp" alt="">
+           <div class="approval-chat-bubble">
+              <div class="approval-chat-typing">
+                 <div class="approval-chat-typing-dot"></div>
+                 <div class="approval-chat-typing-dot"></div>
+                 <div class="approval-chat-typing-dot"></div>
+              </div>
+           </div>
+         `;
+         messagesContainer.appendChild(msg);
+         msg.scrollIntoView({ behavior: 'smooth' });
+         return msg;
+     }
+
+     function createTextMsg(text) {
+         const msg = document.createElement('div');
+         msg.className = 'approval-chat-msg';
+         msg.innerHTML = `
+           <img class="approval-chat-avatar" src="img/hero.webp" alt="">
+           <div class="approval-chat-bubble">
+              ${text}
+           </div>
+         `;
+         messagesContainer.appendChild(msg);
+         msg.scrollIntoView({ behavior: 'smooth' });
+     }
+
+     function createCta() {
+         const btn = document.createElement('button');
+         btn.type = 'button';
+         btn.className = 'cta-button approval-chat-cta';
+         btn.textContent = 'PREENCHER MEU ENDEREÇO →';
+         btn.addEventListener('click', () => {
+             goToSection('address');
+         });
+         messagesContainer.appendChild(btn);
+         btn.scrollIntoView({ behavior: 'smooth' });
+     }
+
+     const nameInput = document.querySelector('#profileName');
+     const userName = nameInput && nameInput.value.trim() !== '' ? nameInput.value : 'Avaliadora';
+     const firstName = userName.split(' ')[0];
+
+     const delay = (ms) => new Promise(r => setTimeout(r, ms));
+     
+     (async () => {
+         await delay(1000);
+         const typing1 = createTypingMsg();
+         await delay(2000);
+         typing1.remove();
+         createTextMsg(`Oi ${firstName}! Tudo bem? Passando para avisar que acabamos de aprovar o seu perfil. 🎉`);
+         
+         await delay(1500);
+         const typing2 = createTypingMsg();
+         await delay(2500);
+         typing2.remove();
+         createTextMsg(`Como você preencheu tudo certinho, sua vaga de Avaliadora já foi garantida e seus kits já estão reservados.`);
+         
+         await delay(1500);
+         const typing3 = createTypingMsg();
+         await delay(2000);
+         typing3.remove();
+         createTextMsg(`Agora só precisamos que você preencha os dados do seu endereço para enviarmos o seu acesso ao app e os primeiros produtos.`);
+         
+         await delay(1000);
+         createCta();
+     })();
   }
 
   // --- Step 1: Start ---
@@ -270,12 +357,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const profileName = document.querySelector('#profileName');
           const approvalName = document.querySelector('[data-step-panel="approval-chat-name-full"]');
           if(profileName && profileName.value && approvalName) {
-              approvalName.textContent = profileName.value;
+              const firstName = profileName.value.split(' ')[0].toUpperCase();
+              approvalName.textContent = 'CHAT EXCLUSIVO: ' + firstName;
+          } else if(approvalName) {
+              approvalName.textContent = 'CHAT EXCLUSIVO';
           }
-
-          setTimeout(() => {
-            goToSection('address');
-          }, 3000);
         });
       }
     }, 3600);
