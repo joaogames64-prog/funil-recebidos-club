@@ -99,7 +99,13 @@ app.post('/api/checkout', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Recebidos Club Backend running on port ${PORT}`);
-});
+// Export the Express app so Vercel can run it as a serverless function
+module.exports = app;
+
+// Only listen locally if we are not on Vercel
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 Recebidos Club Backend running on port ${PORT}`);
+  });
+}

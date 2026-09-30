@@ -924,11 +924,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
            try {
                const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                 ? 'http://localhost:3000/api/checkout' 
-                 : '/api/checkout'; // Fallback for production if hosted together
+                 ? 'http://localhost:3001/api/checkout' 
+                 : '/api/checkout'; 
                  
-               // For testing, let's force localhost since we are running server.js locally on 3001
-               const response = await fetch('http://localhost:3001/api/checkout', {
+               const response = await fetch(API_URL, {
                    method: 'POST',
                    headers: { 'Content-Type': 'application/json' },
                    body: JSON.stringify({ customer, planKey, shippingKey, hasBump })
