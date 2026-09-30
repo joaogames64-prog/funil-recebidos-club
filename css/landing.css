@@ -84,3 +84,27 @@ p.rc-ms-qhint {
   line-height: 1.45 !important;
   display: block !important;
 }
+
+/* Fix para foto de perfil sobrepondo mensagens de chat */
+.approval-chat-msg {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    position: relative !important;
+    padding-left: 0 !important;
+}
+.approval-chat-msg.approval-chat-msg--user {
+    justify-content: flex-end !important;
+}
+.approval-chat-avatar {
+    position: static !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin-top: 4px !important; /* Ajuda a alinhar melhor com a primeira linha do texto */
+}
+.approval-chat-bubble {
+    margin-left: 0 !important;
+}
