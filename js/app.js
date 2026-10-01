@@ -397,19 +397,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const rail = document.querySelector('[data-step-panel="kit-confirmation-carousel-rail-top"]');
       if (rail) {
         rail.innerHTML = '';
-        // Duplicate multiple times for continuous marquee effect (20 times to prevent whitespace)
-        for (let i = 0; i < 20; i++) {
-            Array.from(selectedKits).forEach(idx => {
-              const kitCard = kitCards[idx];
-              const imgPath = kitCard.querySelector('img').src;
-              const item = document.createElement('div');
-              item.className = 'kit-confirmation-carousel-item';
-              const img = document.createElement('img');
-              img.src = imgPath;
-              item.appendChild(img);
-              rail.appendChild(item);
-            });
+        // Optimized sequence generation to prevent performance lag (max ~20 items total)
+        const baseSequence = Array.from(selectedKits);
+        let aSequence = [];
+        while (aSequence.length < 8) {
+          aSequence = aSequence.concat(baseSequence);
         }
+        const fullRail = aSequence.concat(aSequence);
+
+        fullRail.forEach(idx => {
+          const kitCard = kitCards[idx];
+          const imgPath = kitCard.querySelector('img').src;
+          const item = document.createElement('div');
+          item.className = 'kit-confirmation-carousel-item';
+          const img = document.createElement('img');
+          img.src = imgPath;
+          item.appendChild(img);
+          rail.appendChild(item);
+        });
       }
 
       // Update total price (R$235.90 per kit as seen in original)
