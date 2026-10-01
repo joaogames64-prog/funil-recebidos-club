@@ -202,7 +202,7 @@ app.post('/api/checkout', async (req, res) => {
     // --- STEP 2: Chamada do Adapter LowTrack para PIX Gerado (sale.pending) ---
     // O backend chama a função logo após gravar/criar a venda na gateway (HuraPay).
     // Aqui nós injetamos as UTMs da sessão. Elas vão ser gravadas na LowTrack vinculadas ao transaction_id.
-    sendToLowtrack({
+    await sendToLowtrack({
       status: hurapayData.status || "processing",
       transaction_id: hurapayData.id,
       amount: Number((totalAmount / 100).toFixed(2)), // Valor em BRL
