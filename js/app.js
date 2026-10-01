@@ -403,8 +403,16 @@ document.addEventListener('DOMContentLoaded', () => {
           baseSequence = [0, 1, 2];
         }
 
-        // Just append the selected kits once for native scrolling (much lighter)
-        baseSequence.forEach(idx => {
+        // Garante que a sequência tenha pelo menos 4 itens para cobrir a tela (ex: se escolher só 1 kit)
+        let aSequence = [];
+        while (aSequence.length < 4) {
+          aSequence = aSequence.concat(baseSequence);
+        }
+
+        // A pedido: repete a mesma imagem (ex: 1,2,3, 1,2,3) para a animação contínua super leve
+        const fullRail = aSequence.concat(aSequence);
+
+        fullRail.forEach(idx => {
           const kitCard = kitCards[idx];
           const imgPath = kitCard.querySelector('img').src;
           const item = document.createElement('div');
