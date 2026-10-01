@@ -81,67 +81,7 @@ app.post('/api/checkout', async (req, res) => {
     if (utmSck) utmParts.push(`k_${utmSck}`);
     const externalId = `lead_${Date.now()}_${utmParts.join('_')}`;
 
-    // --- LOWTRACK INTEGRATION (STEP 1: send tracking BEFORE HuraPay) ---
-    // We send sale.checkout with our externalId FIRST so LowTrack registers UTMs.
-    // When HuraPay's postback arrives later with sale.pending, LowTrack updates the
-    // same sale's status but keeps our tracking data.
-    const LOWTRACK_TOKEN = process.env.LOWTRACK_API_TOKEN || 'lt_cc5793ee738797e0d74bc17d753582eba4bdbca445771445';
-    if (LOWTRACK_TOKEN) {
-      try {
-        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
-        const userAgent = req.headers['user-agent'] || '';
-        
-        const lowtrackProducts = [];
-        lowtrackProducts.push({ id: CATALOG[planKey].id, name: `Plano ${planKey.split('_')[1]}` });
-        if (hasBump) {
-          lowtrackProducts.push({ id: CATALOG.bump_kits.id, name: "Kits Surpresa (Bump)" });
-        }
-        
-        const lowtrackPayload = {
-          event: "sale.checkout",
-          transaction_id: externalId,
-          amount: totalAmount / 100,
-          currency: "BRL",
-          payment_method: "pix",
-          product: lowtrackProducts[0],
-          products: lowtrackProducts,
-          customer: {
-            name: customer.name || "Cliente Recebidos",
-            email: customer.email,
-            phone: cleanedPhone,
-            document: validCpf
-          },
-          tracking: {
-            utm_source: utms?.utm_source || "",
-            utm_medium: utms?.utm_medium || "",
-            utm_campaign: utms?.utm_campaign || "",
-            utm_term: utms?.utm_term || "",
-            utm_content: utms?.utm_content || "",
-            src: utms?.src || "",
-            sck: utms?.sck || ""
-          },
-          user_ip: clientIp.split(',')[0].trim(),
-          user_agent: userAgent,
-          metadata: {
-            platform: "hurapay"
-          }
-        };
-
-        const ltRes = await axios.post('https://lowtrack.com.br/api/webhook', lowtrackPayload, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${LOWTRACK_TOKEN}`
-          }
-        });
-        console.log("LowTrack checkout registered:", ltRes.data);
-
-      } catch (ltErr) {
-        console.error("LowTrack Error:", ltErr.response?.data || ltErr.message);
-        // Don't block the checkout if LowTrack fails
-      }
-    }
-
-    // --- HURAPAY (STEP 2: create PIX charge AFTER LowTrack has our tracking) ---
+    // --- STEP 1: Create PIX on HuraPay ---
     const payload = {
       amount: totalAmount,
       expiresIn: 3600,
@@ -162,7 +102,59 @@ app.post('/api/checkout', async (req, res) => {
       }
     });
 
-    res.json(response.data);
+    const hurapayData = response.data;
+
+    // --- STEP 2: Send tracking to LowTrack using HuraPay's charge ID ---
+    // Uses sale.checkout (different from Rivoopay's sale.pending) so LowTrack
+    // accepts it and attaches UTMs to the same sale.
+    const LOWTRACK_TOKEN = 'lt_cc5793ee738797e0d74bc17d753582eba4bdbca445771445';
+    try {
+      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+      const userAgent = req.headers['user-agent'] || '';
+      
+      const lowtrackProducts = [];
+      lowtrackProducts.push({ id: CATALOG[planKey].id, name: `Plano ${planKey.split('_')[1]}` });
+      if (hasBump) {
+        lowtrackProducts.push({ id: CATALOG.bump_kits.id, name: "Kits Surpresa (Bump)" });
+      }
+      
+      await axios.post('https://lowtrack.com.br/api/webhook', {
+        event: "sale.checkout",
+        transaction_id: hurapayData.id,
+        amount: totalAmount / 100,
+        currency: "BRL",
+        payment_method: "pix",
+        product: lowtrackProducts[0],
+        products: lowtrackProducts,
+        customer: {
+          name: customer.name || "Cliente Recebidos",
+          email: customer.email,
+          phone: cleanedPhone,
+          document: validCpf
+        },
+        tracking: {
+          utm_source: utms?.utm_source || "",
+          utm_medium: utms?.utm_medium || "",
+          utm_campaign: utms?.utm_campaign || "",
+          utm_term: utms?.utm_term || "",
+          utm_content: utms?.utm_content || "",
+          src: utms?.src || "",
+          sck: utms?.sck || ""
+        },
+        user_ip: clientIp.split(',')[0].trim(),
+        user_agent: userAgent,
+        metadata: { platform: "hurapay" }
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${LOWTRACK_TOKEN}`
+        }
+      });
+    } catch (ltErr) {
+      console.error("LowTrack Error:", ltErr.response?.data || ltErr.message);
+    }
+
+    res.json(hurapayData);
 
   } catch (error) {
     console.error("HuraPay API Error:", error.response?.data || error.message);
