@@ -81,37 +81,16 @@ app.post('/api/checkout', async (req, res) => {
     if (utmSck) utmParts.push(`k_${utmSck}`);
     const externalId = `lead_${Date.now()}_${utmParts.join('_')}`;
 
-    const payload = {
-      amount: totalAmount,
-      expiresIn: 3600, // 1h
-      externalId: externalId,
-      customer: {
-        taxId: validCpf,
-        name: customer.name || "Cliente Recebidos",
-        email: customer.email,
-        phone: cleanedPhone
-      },
-      items: items
-    };
-
-    const response = await axios.post('https://api.hurapay.com.br/v1/charge/pix', payload, {
-      headers: {
-        'X-API-KEY': HURAPAY_API_KEY,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const hurapayData = response.data;
-
-    // --- LOWTRACK INTEGRATION ---
-    // Fire and forget a webhook to LowTrack to register tracking data for this transaction
+    // --- LOWTRACK INTEGRATION (STEP 1: send tracking BEFORE HuraPay) ---
+    // We send sale.checkout with our externalId FIRST so LowTrack registers UTMs.
+    // When HuraPay's postback arrives later with sale.pending, LowTrack updates the
+    // same sale's status but keeps our tracking data.
     const LOWTRACK_TOKEN = process.env.LOWTRACK_API_TOKEN || 'lt_cc5793ee738797e0d74bc17d753582eba4bdbca445771445';
     if (LOWTRACK_TOKEN) {
       try {
         const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
         const userAgent = req.headers['user-agent'] || '';
         
-        // Build the products array as required by LowTrack (first item is main, rest are bumps)
         const lowtrackProducts = [];
         lowtrackProducts.push({ id: CATALOG[planKey].id, name: `Plano ${planKey.split('_')[1]}` });
         if (hasBump) {
@@ -119,9 +98,9 @@ app.post('/api/checkout', async (req, res) => {
         }
         
         const lowtrackPayload = {
-          event: "sale.pending",
-          transaction_id: hurapayData.id,
-          amount: totalAmount / 100, // HuraPay is in cents, LowTrack expects decimals
+          event: "sale.checkout",
+          transaction_id: externalId,
+          amount: totalAmount / 100,
           currency: "BRL",
           payment_method: "pix",
           product: lowtrackProducts[0],
@@ -148,19 +127,42 @@ app.post('/api/checkout', async (req, res) => {
           }
         };
 
-        await axios.post('https://lowtrack.com.br/api/webhook', lowtrackPayload, {
+        const ltRes = await axios.post('https://lowtrack.com.br/api/webhook', lowtrackPayload, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${LOWTRACK_TOKEN}`
           }
         });
+        console.log("LowTrack checkout registered:", ltRes.data);
 
       } catch (ltErr) {
-        console.error("LowTrack Logic Error:", ltErr.response?.data || ltErr.message);
+        console.error("LowTrack Error:", ltErr.response?.data || ltErr.message);
+        // Don't block the checkout if LowTrack fails
       }
     }
 
-    res.json(hurapayData);
+    // --- HURAPAY (STEP 2: create PIX charge AFTER LowTrack has our tracking) ---
+    const payload = {
+      amount: totalAmount,
+      expiresIn: 3600,
+      externalId: externalId,
+      customer: {
+        taxId: validCpf,
+        name: customer.name || "Cliente Recebidos",
+        email: customer.email,
+        phone: cleanedPhone
+      },
+      items: items
+    };
+
+    const response = await axios.post('https://api.hurapay.com.br/v1/charge/pix', payload, {
+      headers: {
+        'X-API-KEY': HURAPAY_API_KEY,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.json(response.data);
 
   } catch (error) {
     console.error("HuraPay API Error:", error.response?.data || error.message);
