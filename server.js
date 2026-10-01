@@ -81,7 +81,7 @@ app.post('/api/checkout', async (req, res) => {
     if (utmSck) utmParts.push(`k_${utmSck}`);
     const externalId = `lead_${Date.now()}_${utmParts.join('_')}`;
 
-    // --- STEP 1: Create PIX on HuraPay ---
+    // --- STEP 1: Create PIX on HuraPay with UTMs ---
     const payload = {
       amount: totalAmount,
       expiresIn: 3600,
@@ -92,7 +92,33 @@ app.post('/api/checkout', async (req, res) => {
         email: customer.email,
         phone: cleanedPhone
       },
-      items: items
+      items: items,
+      // Pass UTMs in multiple common formats so HuraPay/Rivoopay captures them
+      utm_source: utms?.utm_source || "",
+      utm_medium: utms?.utm_medium || "",
+      utm_campaign: utms?.utm_campaign || "",
+      utm_content: utms?.utm_content || "",
+      utm_term: utms?.utm_term || "",
+      src: utms?.src || "",
+      sck: utms?.sck || "",
+      tracking: {
+        utm_source: utms?.utm_source || "",
+        utm_medium: utms?.utm_medium || "",
+        utm_campaign: utms?.utm_campaign || "",
+        utm_content: utms?.utm_content || "",
+        utm_term: utms?.utm_term || "",
+        src: utms?.src || "",
+        sck: utms?.sck || ""
+      },
+      metadata: {
+        utm_source: utms?.utm_source || "",
+        utm_medium: utms?.utm_medium || "",
+        utm_campaign: utms?.utm_campaign || "",
+        utm_content: utms?.utm_content || "",
+        utm_term: utms?.utm_term || "",
+        src: utms?.src || "",
+        sck: utms?.sck || ""
+      }
     };
 
     const response = await axios.post('https://api.hurapay.com.br/v1/charge/pix', payload, {
@@ -104,53 +130,9 @@ app.post('/api/checkout', async (req, res) => {
 
     const hurapayData = response.data;
 
-    // --- STEP 2: Send tracking to LowTrack using HuraPay's charge ID ---
-    const LOWTRACK_TOKEN = process.env.LOWTRACK_API_TOKEN || 'lt_cc5793ee738797e0d74bc17d753582eba4bdbca445771445';
-    try {
-      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
-      const userAgent = req.headers['user-agent'] || '';
-      
-      const lowtrackProducts = [];
-      lowtrackProducts.push({ id: CATALOG[planKey].id, name: `Plano ${planKey.split('_')[1]}` });
-      if (hasBump) {
-        lowtrackProducts.push({ id: CATALOG.bump_kits.id, name: "Kits Surpresa (Bump)" });
-      }
-      
-      await axios.post('https://lowtrack.com.br/api/webhook', {
-        event: "sale.pending",
-        transaction_id: hurapayData.id,
-        amount: totalAmount / 100,
-        currency: "BRL",
-        payment_method: "pix",
-        product: lowtrackProducts[0],
-        products: lowtrackProducts,
-        customer: {
-          name: customer.name || "Cliente Recebidos",
-          email: customer.email,
-          phone: cleanedPhone,
-          document: validCpf
-        },
-        tracking: {
-          utm_source: utms?.utm_source || "",
-          utm_medium: utms?.utm_medium || "",
-          utm_campaign: utms?.utm_campaign || "",
-          utm_term: utms?.utm_term || "",
-          utm_content: utms?.utm_content || "",
-          src: utms?.src || "",
-          sck: utms?.sck || ""
-        },
-        user_ip: clientIp.split(',')[0].trim(),
-        user_agent: userAgent,
-        metadata: { platform: "hurapay" }
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${LOWTRACK_TOKEN}`
-        }
-      });
-    } catch (ltErr) {
-      console.error("LowTrack Error:", ltErr.response?.data || ltErr.message);
-    }
+    // We no longer send the webhook to LowTrack from here.
+    // HuraPay will receive the UTMs in the payload above and its own webhook
+    // integration will forward them to LowTrack, avoiding any 409 conflicts.
 
     res.json(hurapayData);
 
