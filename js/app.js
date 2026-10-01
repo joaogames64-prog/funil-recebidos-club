@@ -393,35 +393,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnKitsConfirm) {
     btnKitsConfirm.addEventListener('click', () => {
-      // Build continuous carousel
+      // Build continuous carousel - preload images to avoid white flash
       const rail = document.querySelector('[data-step-panel="kit-confirmation-carousel-rail-top"]');
       if (rail) {
+        // Pause animation while we rebuild
+        rail.style.animation = 'none';
         rail.innerHTML = '';
+
         // Fallback if no kits are selected
         let baseSequence = Array.from(selectedKits);
         if (baseSequence.length === 0) {
           baseSequence = [0, 1, 2];
         }
 
-        // Garante que a sequência tenha pelo menos 4 itens para cobrir a tela (ex: se escolher só 1 kit)
+        // Map kit index to actual image file number (from the kit cards)
+        const getImgPath = (idx) => {
+          const card = kitCards[idx];
+          if (card) {
+            const img = card.querySelector('img');
+            if (img) {
+              // Use the original src attribute (not the lazy-loaded one)
+              return img.getAttribute('src') || img.src || `img/kits/${idx + 1}.webp`;
+            }
+          }
+          return `img/kits/${idx + 1}.webp`;
+        };
+
+        // Garante que a sequência tenha pelo menos 6 itens para cobrir a tela
         let aSequence = [];
-        while (aSequence.length < 4) {
+        while (aSequence.length < 6) {
           aSequence = aSequence.concat(baseSequence);
         }
 
-        // A pedido: repete a mesma imagem (ex: 1,2,3, 1,2,3) para a animação contínua super leve
+        // Duplica para loop infinito (a animação translateX(-50%) precisa do dobro)
         const fullRail = aSequence.concat(aSequence);
 
-        fullRail.forEach(idx => {
-          const kitCard = kitCards[idx];
-          const imgPath = kitCard.querySelector('img').src;
+        // Coleta todos os caminhos das imagens
+        const imgPaths = fullRail.map(idx => getImgPath(idx));
+
+        // Pré-carrega TODAS as imagens antes de mostrar
+        let loadedCount = 0;
+        const totalImages = imgPaths.length;
+
+        const onAllLoaded = () => {
+          // Força reflow e inicia animação só quando tudo carregou
+          void rail.offsetWidth;
+          rail.style.animation = '';
+        };
+
+        imgPaths.forEach((path, i) => {
           const item = document.createElement('div');
           item.className = 'kit-confirmation-carousel-item';
           const img = document.createElement('img');
-          img.src = imgPath;
+          img.onload = () => {
+            loadedCount++;
+            if (loadedCount >= totalImages) onAllLoaded();
+          };
+          img.onerror = () => {
+            // Se falhar, esconde o item mas continua
+            item.style.display = 'none';
+            loadedCount++;
+            if (loadedCount >= totalImages) onAllLoaded();
+          };
+          img.src = path;
           item.appendChild(img);
           rail.appendChild(item);
         });
+
+        // Safety net: se por algum motivo não carregarem em 3s, inicia mesmo assim
+        setTimeout(() => {
+          if (rail.style.animation === 'none') {
+            rail.style.animation = '';
+          }
+        }, 3000);
       }
 
       // Update total price (R$235.90 per kit as seen in original)
