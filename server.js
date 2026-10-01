@@ -105,9 +105,7 @@ app.post('/api/checkout', async (req, res) => {
     const hurapayData = response.data;
 
     // --- STEP 2: Send tracking to LowTrack using HuraPay's charge ID ---
-    // Uses sale.checkout (different from Rivoopay's sale.pending) so LowTrack
-    // accepts it and attaches UTMs to the same sale.
-    const LOWTRACK_TOKEN = 'lt_cc5793ee738797e0d74bc17d753582eba4bdbca445771445';
+    const LOWTRACK_TOKEN = process.env.LOWTRACK_API_TOKEN || 'lt_cc5793ee738797e0d74bc17d753582eba4bdbca445771445';
     try {
       const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
       const userAgent = req.headers['user-agent'] || '';
@@ -119,7 +117,7 @@ app.post('/api/checkout', async (req, res) => {
       }
       
       await axios.post('https://lowtrack.com.br/api/webhook', {
-        event: "sale.checkout",
+        event: "sale.pending",
         transaction_id: hurapayData.id,
         amount: totalAmount / 100,
         currency: "BRL",
