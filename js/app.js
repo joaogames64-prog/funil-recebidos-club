@@ -397,19 +397,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const rail = document.querySelector('[data-step-panel="kit-confirmation-carousel-rail-top"]');
       if (rail) {
         rail.innerHTML = '';
-        // Optimized sequence generation to prevent performance lag (max ~20 items total)
+        // Fallback if no kits are selected
         let baseSequence = Array.from(selectedKits);
         if (baseSequence.length === 0) {
-          // Fallback if somehow no kits are selected
           baseSequence = [0, 1, 2];
         }
-        let aSequence = [];
-        while (aSequence.length < 8) {
-          aSequence = aSequence.concat(baseSequence);
-        }
-        const fullRail = aSequence.concat(aSequence);
 
-        fullRail.forEach(idx => {
+        // Just append the selected kits once for native scrolling (much lighter)
+        baseSequence.forEach(idx => {
           const kitCard = kitCards[idx];
           const imgPath = kitCard.querySelector('img').src;
           const item = document.createElement('div');

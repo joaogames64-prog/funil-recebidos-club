@@ -114,15 +114,21 @@ p.rc-ms-qhint {
     margin: 20px 0 12px;
 }
 .kit-confirmation-carousel {
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     width: 100%;
     margin-bottom: 12px;
     padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.kit-confirmation-carousel::-webkit-scrollbar {
+    display: none;
 }
 .kit-confirmation-carousel-rail {
     display: inline-flex;
     gap: 12px;
-    animation: scroll-carousel 15s linear infinite;
+    padding: 0 20px;
 }
 .kit-confirmation-carousel-item {
     width: 140px;
