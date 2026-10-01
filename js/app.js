@@ -397,8 +397,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const rail = document.querySelector('[data-step-panel="kit-confirmation-carousel-rail-top"]');
       if (rail) {
         rail.innerHTML = '';
-        // Duplicate multiple times for continuous marquee effect
-        for (let i = 0; i < 4; i++) {
+        // Duplicate multiple times for continuous marquee effect (20 times to prevent whitespace)
+        for (let i = 0; i < 20; i++) {
             Array.from(selectedKits).forEach(idx => {
               const kitCard = kitCards[idx];
               const imgPath = kitCard.querySelector('img').src;
