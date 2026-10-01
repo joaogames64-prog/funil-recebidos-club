@@ -398,7 +398,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (rail) {
         rail.innerHTML = '';
         // Optimized sequence generation to prevent performance lag (max ~20 items total)
-        const baseSequence = Array.from(selectedKits);
+        let baseSequence = Array.from(selectedKits);
+        if (baseSequence.length === 0) {
+          // Fallback if somehow no kits are selected
+          baseSequence = [0, 1, 2];
+        }
         let aSequence = [];
         while (aSequence.length < 8) {
           aSequence = aSequence.concat(baseSequence);

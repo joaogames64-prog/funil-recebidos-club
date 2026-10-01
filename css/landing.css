@@ -120,9 +120,8 @@ p.rc-ms-qhint {
     padding: 10px 0;
 }
 .kit-confirmation-carousel-rail {
-    display: flex;
+    display: inline-flex;
     gap: 12px;
-    width: max-content;
     animation: scroll-carousel 15s linear infinite;
 }
 .kit-confirmation-carousel-item {
